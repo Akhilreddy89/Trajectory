@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Recommendations from "./recommendations";
 
 function Dashboard() {
   const [data, setData] = useState(null);
@@ -27,18 +28,22 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="dashboard">
-      <h1>Dashboard</h1>
+    <>
+      <div className="dashboard">
+        <h1>Dashboard</h1>
 
-      {!data ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          <p>User Name: {data.user.fullname}</p>
-          <p>Email: {data.user.email}</p>
-        </>
-      )}
-    </div>
+        {!data ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <p>User Name: {data.user.fullname}</p>
+            <p>Email: {data.user.email}</p>
+          </>
+        )}
+        
+      </div>
+      <Recommendations/>
+    </>
   );
 }
 

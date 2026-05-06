@@ -3,7 +3,7 @@ import cors from 'cors';
 import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import authRouter from "./routes/authRouter.js";
-import protectedRouter from "./routes/protectedRouter.js";
+import userRouter from './routes/userRouter.js';
 const app=express();
 dotenv.config();
 app.use(express.json());
@@ -15,7 +15,7 @@ app.use(cors({
   credentials: true
 }));
 app.use("/api", authRouter);
-app.use("/api", protectedRouter);
+app.use("/api", userRouter);
 
 app.get('/',(req,res)=>{
     res.json("hello");

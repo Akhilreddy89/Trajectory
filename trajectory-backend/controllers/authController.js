@@ -13,7 +13,7 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const token = jwt.sign({ userid: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
     res.json({ success: true, message: "Login successful", user, token });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -34,4 +34,12 @@ const registerUser = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }  
 };           
-export  { loginUser, registerUser };
+const getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user).select("-password");
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+export  { loginUser, registerUser,getCurrentUser };

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../context/authContext";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,15 +24,13 @@ function Login() {
         }
       );
       const data = res.data;
-      console.log(data);
-      localStorage.setItem("token", data.token);
       if (data.success) {
         navigate("/dashboard");
+        login(data.token);
       } else {
         alert("Login failed");
       }
     } catch (err) {
-      console.error(err);
       alert("Server error");
     }
   };
