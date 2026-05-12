@@ -1,64 +1,134 @@
 import mongoose from "mongoose";
-import User from "./User.js";
-import Course from "./Course.js"; 
+
 const profileSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",          
+      ref: "User",
       required: true,
-      unique: true          
+      unique: true
     },
 
-    name: {
+    fullName: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
-    college: String,
-    branch: String,
-    year: Number,
 
-    skills: [
-      {
-        name: { type: String },
-        level: {
-          type: String,
-          enum: ["beginner", "intermediate", "advanced"],
-          default: "beginner"
+    college: {
+      type: String,
+      trim: true
+    },
+
+    branch: {
+      type: String,
+      trim: true
+    },
+
+    year: {
+      type: Number,
+      min: 1,
+      max: 5
+    },
+
+    careerGoal: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    skills: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: true,
+            trim: true
+          },
+
+          level: {
+            type: String,
+            enum: ["beginner", "intermediate", "advanced"],
+            default: "beginner"
+          }
         }
-      }
-    ],
-    interests: [String],
-    learningGoals: [String],
+      ],
+      default: []
+    },
+
+    interests: {
+      type: [String],
+      default: []
+    },
+
+    learningGoals: {
+      type: [String],
+      default: []
+    },
 
     preferredLearningStyle: {
       type: String,
-      enum: ["video", "theory", "project"]
+      enum: ["video", "theory", "project", "mixed"],
+      required: true
     },
 
-    completedCourses: [
-      {
-        courseId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Course"   
-        },
-        progress: {
-          type: Number,
-          min: 0,
-          max: 100
+    preferredDifficultyLevel: {
+      type: String,
+      enum: ["beginner", "intermediate", "advanced"],
+      required: true
+    },
+
+    weeklyLearningHours: {
+      type: Number,
+      min: 1,
+      default: 5
+    },
+    enrolledCourses: [
+  {
+    courseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course"
+    },
+
+    progress: {
+      type: Number,
+      default: 0
+    },
+
+    status: {
+      type: String,
+      enum: [
+        "saved",
+        "ongoing",
+        "completed"
+      ],
+      default: "saved"
+    },
+
+    savedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }
+],
+    
+
+    roadmap: {
+      type: [
+        {
+          title: {
+            type: String,
+            required: true
+          },
+          status: {
+            type: String,
+            enum: ["pending", "in-progress", "completed"],
+            default: "pending"
+          }
         }
-      }
-    ],
-    roadmap: [
-      {
-        title: String,
-        status: {
-          type: String,
-          enum: ["pending", "in-progress", "completed"],
-          default: "pending"
-        }
-      }
-    ]
+      ],
+      default: []
+    }
   },
   { timestamps: true }
 );

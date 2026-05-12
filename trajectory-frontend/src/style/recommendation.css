@@ -1,0 +1,45 @@
+.recommendations-page {
+    padding: 2rem;
+    min-height: calc(100vh - 100px);
+    background: #f5f7fb;
+}
+
+.recommendations-header {
+    max-width: 1000px;
+    margin: 0 auto 2rem;
+    text-align: center;
+}
+
+.recommendations-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: #1f2937;
+}
+
+.recommendations-header p {
+    margin-top: 0.75rem;
+    color: #4b5563;
+    font-size: 1rem;
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.recommendations-empty {
+    padding: 3rem;
+    text-align: center;
+    color: #4b5563;
+}
+
+.recommendations-empty p {
+    font-size: 1.1rem;
+}
+
+.recommendations-page p {
+    margin: 0;
+}

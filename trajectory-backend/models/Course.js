@@ -5,13 +5,18 @@ const courseSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
+      trim: true,
     },
 
-    description: String,
+    description: {
+      type: String,
+      default: "",
+    },
 
     source: {
       type: String,
-      required: true, 
+      required: true,
+      trim: true,
     },
 
     url: {
@@ -19,7 +24,20 @@ const courseSchema = new mongoose.Schema(
       required: true,
     },
 
-    skills: [String], 
+    skills: {
+      type: [String],
+      default: [],
+    },
+
+    category: {
+      type: String,
+      default: "",
+    },
+
+    careerPaths: {
+      type: [String],
+      default: [],
+    },
 
     level: {
       type: String,
@@ -33,18 +51,28 @@ const courseSchema = new mongoose.Schema(
       required: true,
     },
 
-    duration: String, 
+    duration: {
+      type: String,
+      default: "",
+    },
 
     rating: {
       type: Number,
       min: 0,
       max: 5,
+      default: 4,
     },
 
-    instructor: String,
-    category: String, 
+    instructor: {
+      type: String,
+      default: "",
+    },
 
-    thumbnail: String,
+    thumbnail: {
+      type: String,
+      default: "",
+    },
+
     enrolledCount: {
       type: Number,
       default: 0,
@@ -52,7 +80,9 @@ const courseSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+courseSchema.index({ skills: 1 });
+courseSchema.index({ category: 1 });
+courseSchema.index({ careerPaths: 1 });
 const Course = mongoose.model("Course", courseSchema);
 
 export default Course;

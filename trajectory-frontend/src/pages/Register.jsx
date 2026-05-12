@@ -27,7 +27,7 @@ function Register() {
       const data = res.data;
 
       if (data.success) {
-        navigate("/dashboard");
+        navigate("/login");
       } else {
         alert("Signup failed");
       }

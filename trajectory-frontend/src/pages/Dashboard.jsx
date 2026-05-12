@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Recommendations from "./recommendations";
-
+import { useNavigate } from "react-router-dom";
 function Dashboard() {
   const [data, setData] = useState(null);
-
+  const navigation = useNavigate();
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
@@ -16,11 +16,16 @@ function Dashboard() {
             },
           }
         );
-
+        if(res.status === 401) {
+          // throw new Error("Unauthorized");
+          navigation("/login");
+        }
         console.log(res.data);
         setData(res.data);
+  
       } catch (err) {
-        console.error(err);
+        navigation("/login");
+        // console.error(err);
       }
     };
 

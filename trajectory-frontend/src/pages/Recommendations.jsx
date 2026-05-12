@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import CourseCard from "../components/CourseCard";
+import "../style/recommendation.css";
 
 function Recommendations() {
   const [courses, setCourses] = useState([]);
@@ -17,7 +19,7 @@ function Recommendations() {
           }
         );
 
-        setCourses(res.data.courses); // 🔥 important
+        setCourses(res.data.courses);
       } catch (err) {
         console.error(err);
       } finally {
@@ -30,23 +32,20 @@ function Recommendations() {
 
   if (loading) return <p>Loading...</p>;
 
-  if (!courses.length) return <p>No recommendations available</p>;
+  if (!courses.length) return <div className="recommendations-empty"><p>No recommendations available.</p></div>;
 
   return (
-    <div>
-      <h2>Recommended Courses</h2>
+    <div className="recommendations-page">
+      <div className="recommendations-header">
+        <h2>Recommended Courses</h2>
+        <p>Explore tailored learning paths and discover courses that match your current goals.</p>
+      </div>
 
-      <ul>
+      <div className="recommendations-grid">
         {courses.map((course) => (
-          <li key={course._id}>
-            <h4>{course.title}</h4>
-            <p>{course.source}</p>
-            <img src={course.thumbnail} alt={course.title} width="200" />
-            <br />
-            <a href={course.url} target="_blank">Go to Course</a>
-          </li>
+          <CourseCard key={course._id} course={course} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
