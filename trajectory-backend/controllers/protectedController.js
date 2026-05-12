@@ -78,15 +78,16 @@ const getCourses = async (req, res) => {
     let courses = [];
 
     if (profile.skills.length > 0) {
+      console.log("Finding courses for skills:", profile.skills.map(s => s.name));
       courses = await Course.find({
         skills: { $in: profile.skills.map(s => s.name) },
-        type: profile.preferredLearningStyle
+        // type: profile.preferredLearningStyle
       }).limit(10);
     }
 
-    if (!courses.length) {
-      courses = await Course.find().limit(10);
-    }
+    // if (!courses.length) {
+    //   courses = await Course.find().limit(10);
+    // }
 
     res.json({
       success: true,
