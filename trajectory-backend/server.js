@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import authRouter from "./routes/authRouter.js";
 import userRouter from './routes/userRouter.js';
 import courseRouter from './routes/courseRouter.js';
+import profileRouter from './routes/profileRouter.js';
 const app=express();
 dotenv.config();
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use(cors({
 app.use("/api", authRouter);
 app.use("/api", userRouter);
 app.use("/api", courseRouter);
+app.use("/api/profile", profileRouter);
 
 app.get('/',(req,res)=>{
     res.json("hello");

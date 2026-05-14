@@ -19,8 +19,17 @@ export const getRecommendedCourses = async (userId) => {
 
   for (const course of courses) {
     let score = 0;
+    //we need to check this in user profile completed courses
+    const alreadyEnrolled =
+      profile.enrolledCourses.some(
+        (enrolledCourse) =>
+          enrolledCourse.courseId.toString() ===
+          course._id.toString()
+      );
 
-
+    if (alreadyEnrolled) {
+      continue;
+    }
     const userSkills = profile.skills.map(
       (skill) => skill.name.toLowerCase()
     );

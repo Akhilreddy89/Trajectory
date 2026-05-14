@@ -1,6 +1,8 @@
 import '../style/CourseCard.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 function CourseCard({ course }) {
+  const navigate = useNavigate();
   const saveCourse=async()=>{
     try {
       await axios.post(
@@ -22,7 +24,10 @@ function CourseCard({ course }) {
   const handleClick = () => {
     // console.log("Saving course with ID:", course._id);
     saveCourse();
+    //here can i call fetch course function again
+
   }
+  
 
   return (
     <div className="course-card">

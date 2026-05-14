@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
+import  {updateProfile ,getProfile} from "../../services/profileService.js";
 function Profile() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
 
   const [profile, setProfile] = useState({
@@ -39,16 +41,8 @@ function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      const p = res.data.profile;
+      const res = await getProfile();
+      const p = res;
 
       if (p) {
         setProfile({
@@ -184,22 +178,8 @@ function Profile() {
   };
 
   const handleSubmit = async () => {
-    try {
-      await axios.put(
-        "http://localhost:5000/api/profile",
-        profile,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      alert("Profile Updated Successfully");
-    } catch (err) {
-      console.error(err);
-      alert("Failed To Update Profile");
-    }
+    await updateProfile(profile);
+    navigate("/dashboard");
   };
 
   if (loading) return <h2>Loading...</h2>;

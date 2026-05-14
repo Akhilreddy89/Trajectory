@@ -1,19 +1,13 @@
 import React from "react";
 import axios from "axios";
 import { useEffect,useState } from "react";
+import { getSavedCourses,deleteSavedCourse,completedCourse } from "../../services/courseServices.js";
 function Bookmarks() {
     const [savedCourses, setSavedCourses] = useState([]);
 
     const getCourses = async() => {
         try{
-            const res = await axios.get(
-                "http://localhost:5000/api/saved-courses",
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                }
-            );
+            const res = await getSavedCourses();
             console.log("Saved courses response:", res.data);
             setSavedCourses(res.data.savedCourses);
             console.log("Saved courses set in state:", res.data.savedCourses);
@@ -28,32 +22,17 @@ function Bookmarks() {
     }, []);
     const deleteCourse = async (courseId) => {
         try {
-            await axios.delete(
-                `http://localhost:5000/api/delete-saved-course/${courseId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                }
-            );
+            await deleteSavedCourse(courseId);
             alert("Course deleted successfully!");
-            getCourses(); // Refresh the list after deletion
+            await getCourses();
         } catch (err) {
             console.error(err);
             alert("Failed to delete course.");
         }
     };
-    const completedCourse = async (courseId) => {
+    const handleMarkCompleted = async (courseId) => {
         try {
-            await axios.post(
-                `http://localhost:5000/api/mark-completed/${courseId}`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                }
-            );
+            await completedCourse(courseId);
             alert("Course marked as completed!");
             getCourses(); // Refresh the list after marking as completed
         } catch (err) {
@@ -76,7 +55,7 @@ function Bookmarks() {
                         <p>{savedCourse.courseId?.category}</p>
                         <p>{savedCourse.courseId?.skills?.join(", ")}</p>
                         <button onClick={() => deleteCourse(savedCourse._id)}>Delete</button>
-                        <button onClick={()=> completedCourse(savedCourse.courseId._id)}>Mark as Completed</button>
+                        <button onClick={()=> handleMarkCompleted(savedCourse.courseId._id)}>Mark as Completed</button>
                         <p>------------------------------------------</p>
                     </div>
                 ))
