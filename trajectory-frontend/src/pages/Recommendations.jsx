@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CourseCard from "../components/CourseCard";
 import "../style/recommendation.css";
+import { getRecommendations } from "../../services/recomendationServives.js";
 
 function Recommendations() {
   const [courses, setCourses] = useState([]);
@@ -10,14 +11,7 @@ function Recommendations() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/recommendations",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await getRecommendations();
 
         setCourses(res.data.courses);
       } catch (err) {

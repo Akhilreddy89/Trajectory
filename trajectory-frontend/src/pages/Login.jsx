@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../context/authContext";
 import { getMyProfile } from "../../services/profileService.js";
-
+import { getLogin } from "../../services/authServices.js";
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
@@ -17,13 +16,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/login",
-        form,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await getLogin(form);
       const data = res.data;
       if (data.success) {
 
