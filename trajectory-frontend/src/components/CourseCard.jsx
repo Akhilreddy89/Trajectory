@@ -22,15 +22,13 @@ function CourseCard({ course }) {
     }
   }
   const handleClick = () => {
-    // console.log("Saving course with ID:", course._id);
     saveCourse();
-    //here can i call fetch course function again
-
   }
   
 
   return (
-    <div className="course-card">
+    //how to handle when user clicks on the course card to navigate to the course details page
+    <div className="course-card" onClick={() => navigate(`/course/${course._id}`)}>
       <h4 className="course-title">{course.title}</h4>
 
       <p className="course-source">{course.source}</p>

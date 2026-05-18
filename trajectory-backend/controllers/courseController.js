@@ -39,6 +39,32 @@ const homecourses = async (req, res) => {
     });
   }
 };
+
+const getCourseById = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId);
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      course,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
 const saveCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -259,4 +285,4 @@ const markCompleted = async (req, res) => {
   }
 };
 
-export { recommendedCourses, homecourses, saveCourse ,getSavedCourses, deleteCourse, markCompleted};
+export { recommendedCourses, homecourses, saveCourse ,getSavedCourses, deleteCourse, markCompleted, getCourseById};

@@ -5,10 +5,12 @@ import {
   getSavedCourses,
   homecourses,
   deleteCourse,
-  markCompleted
+  markCompleted,
+  getCourseById
 } from "../controllers/courseController.js";
 
 const courseRouter = Router();
+courseRouter.get('/course/:courseId', getCourseById);
 courseRouter.post('/save-course/:courseId', authMiddleware, saveCourse);
 courseRouter.get('/saved-courses', authMiddleware, getSavedCourses);
 courseRouter.delete('/delete-saved-course/:courseId', authMiddleware,deleteCourse);

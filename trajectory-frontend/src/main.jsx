@@ -12,6 +12,7 @@ import ProtectedRoute from './pages/ProtectedRoute.jsx'
 import Bookmarks from './pages/Bookmarks.jsx'
 import { AuthProvider } from './context/authContext.jsx'
 import Profile from './pages/Profile.jsx'
+import CourseDetails from './pages/CourseDetails.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/app" element={<ProtectedRoute><App /></ProtectedRoute>} />
+        <Route path="/course/:courseId" element={<ProtectedRoute><CourseDetails /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
