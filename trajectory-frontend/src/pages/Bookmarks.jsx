@@ -2,6 +2,8 @@ import React from "react";
 import axios from "axios";
 import { useEffect,useState } from "react";
 import { getSavedCourses,deleteSavedCourse,completedCourse } from "../../services/courseServices.js";
+import Navbar from "../components/Navbar.jsx";
+import "../style/Home.css";
 function Bookmarks() {
     const [savedCourses, setSavedCourses] = useState([]);
 
@@ -41,7 +43,9 @@ function Bookmarks() {
         }
     };
   return (
-    <div className="bookmarks">
+    <>
+      <Navbar />
+      <div className="bookmarks">
         <h1>Your Bookmarked Courses</h1>
         <div>
             {savedCourses.length === 0 ? (
@@ -62,6 +66,7 @@ function Bookmarks() {
             )}
         </div>
     </div>
+    </>
   );
 }
 export default Bookmarks;

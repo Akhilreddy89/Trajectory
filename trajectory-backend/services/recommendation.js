@@ -102,5 +102,5 @@ export const getRecommendedCourses = async (userId) => {
   );
 
 
-  return recommendedCourses.slice(0, 10);
+  return recommendedCourses.slice(0, 20);
 };

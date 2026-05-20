@@ -1,52 +1,97 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({
+  children,
+}) => {
+
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
 
-  const fetchUser = async () => {
-    if (!token) return;
+  const [token, setToken] = useState(
+    localStorage.getItem("token")
+  );
 
-    try {
-      const res = await fetch("http://localhost:5000/api/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-      setUser(data);
-    } catch (err) {
-      console.error("Error fetching user", err);
-      logout();
-    }
-  };
+  const isAuthenticated = !!token;
 
   useEffect(() => {
+    const fetchUser = async () => {
+      if (!token) {
+        setUser(null);
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          "http://localhost:5000/api/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          localStorage.removeItem("token");
+          setToken(null);
+          setUser(null);
+          return;
+        }
+
+        const data = await res.json();
+        setUser(data);
+
+      } catch (err) {
+        console.error("Error fetching user", err);
+        localStorage.removeItem("token");
+        setToken(null);
+        setUser(null);
+      }
+    };
+
     fetchUser();
   }, [token]);
 
   // Login
-  const login = (token) => {
-    localStorage.setItem("token", token);
-    setToken(token);
+  const login = (newToken) => {
+
+    localStorage.setItem(
+      "token",
+      newToken
+    );
+
+    setToken(newToken);
   };
 
   // Logout
   const logout = () => {
+
     localStorage.removeItem("token");
+
     setToken(null);
+
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isAuthenticated,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () =>
+  useContext(AuthContext);

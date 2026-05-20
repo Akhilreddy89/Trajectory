@@ -32,7 +32,7 @@ function CourseCard({ course }) {
       <h4 className="course-title">{course.title}</h4>
 
       <p className="course-source">{course.source}</p>
-      <p className="course-description">{course.description}</p>
+      {/* <p className="course-description">{course.description}</p> */}
       <p>{(course.skills || []).join(", ")}</p>
       <p className="course-category">{course.category}</p>
       <p>{course.url && (

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import  {updateProfile ,getProfile} from "../../services/profileService.js";
+import Navbar from "../components/Navbar.jsx";
+import "../style/Home.css";
 function Profile() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -184,6 +186,8 @@ function Profile() {
   if (loading) return <h2>Loading...</h2>;
 
   return (
+    <>
+      <Navbar />
     <div style={{ padding: "20px" }}>
       <h1>Trajectory Profile Setup</h1>
 
@@ -578,6 +582,7 @@ function Profile() {
         </div>
       )}
     </div>
+    </>
   );
 }
 
