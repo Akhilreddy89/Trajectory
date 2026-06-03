@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import checkProfile from "../components/Checkprofile.jsx";
 import axios from "axios";
+import CourseCard from "../components/CourseCard.jsx";
+
 
 function Roadmap() {
     const navigate = useNavigate();
@@ -14,6 +16,7 @@ function Roadmap() {
                      Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
+            console.log(res.data);
             setRoadmap(res.data);
         } catch (err) {
             console.error(err);
@@ -26,46 +29,6 @@ function Roadmap() {
     return (
         <>
             <Navbar />
-{/* {_id: '6a0d7c6ae39dd62db7354dc5', role: 'Frontend Developer', category: 'Frontend', level: 'Beginner', description: 'Frontend roadmap for beginners', …}
-category
-: 
-"Frontend"
-createdAt
-: 
-"2026-05-20T09:18:34.891Z"
-description
-: 
-"Frontend roadmap for beginners"
-estimatedDuration
-: 
-"4 Months"
-level
-: 
-"Beginner"
-roadmapImage
-: 
-""
-role
-: 
-"Frontend Developer"
-skillsRequired
-: 
-(3) ['HTML', 'CSS', 'JavaScript']
-stages
-: 
-[{…}]
-updatedAt
-: 
-"2026-05-20T09:18:34.891Z"
-__v
-: 
-0
-_id
-: 
-"6a0d7c6ae39dd62db7354dc5"
-[[Prototype]]
-: 
-Object */}
             <div className="roadmap">
                 <h1>Your Roadmap</h1>
                 <p>This is where your personalized roadmap will be displayed.</p>
@@ -88,10 +51,9 @@ Object */}
                                     <p>Estimated Time: {stage.estimatedTime}</p>
                                     <p>Courses:</p>
                                     <ul>
-                                        {stage.courses.map((course, courseIndex) => (
+                                        {stage.recommendedCourses.map((course, courseIndex) => (
                                             <li key={courseIndex}>
-                                                <h4>{course.title}</h4>
-                                                <p>{course.description}</p>
+                                                <CourseCard course={course} />
                                             </li>
                                         ))}
                                     </ul>

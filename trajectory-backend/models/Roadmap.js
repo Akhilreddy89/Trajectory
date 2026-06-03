@@ -1,64 +1,10 @@
 // models/Roadmap.js
+
 import mongoose from "mongoose";
 
-const courseSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-
-  platform: {
-    type: String,
-    required: true,
-  },
-
-  instructor: {
-    type: String,
-    default: "",
-  },
-
-  thumbnail: {
-    type: String,
-    default: "",
-  },
-
-  url: {
-    type: String,
-    required: true,
-  },
-
-  duration: {
-    type: String,
-    default: "",
-  },
-
-  level: {
-    type: String,
-    enum: ["Beginner", "Intermediate", "Advanced"],
-    default: "Beginner",
-  },
-
-  rating: {
-    type: Number,
-    default: 0,
-  },
-
-  priceType: {
-    type: String,
-    enum: ["Free", "Paid"],
-    default: "Free",
-  },
-
-  tags: [String],
-
-  courseType: {
-    type: String,
-    enum: ["Video", "Theory", "Project-Based"],
-    default: "Video",
-  },
-});
 
 const stageSchema = new mongoose.Schema({
+
   title: {
     type: String,
     required: true,
@@ -83,10 +29,11 @@ const stageSchema = new mongoose.Schema({
     required: true,
   },
 
-  courses: [courseSchema],
 });
 
+
 const roadmapSchema = new mongoose.Schema(
+
   {
     role: {
       type: String,
@@ -95,6 +42,7 @@ const roadmapSchema = new mongoose.Schema(
 
     category: {
       type: String,
+
       enum: [
         "Frontend",
         "Backend",
@@ -106,12 +54,19 @@ const roadmapSchema = new mongoose.Schema(
         "DevOps",
         "Mobile Development",
       ],
+
       required: true,
     },
 
     level: {
       type: String,
-      enum: ["Beginner", "Intermediate", "Advanced"],
+
+      enum: [
+        "Beginner",
+        "Intermediate",
+        "Advanced",
+      ],
+
       required: true,
     },
 
@@ -134,10 +89,16 @@ const roadmapSchema = new mongoose.Schema(
 
     stages: [stageSchema],
   },
+
   {
     timestamps: true,
   }
+
 );
 
-const Roadmap = mongoose.model("Roadmap", roadmapSchema);
+const Roadmap = mongoose.model(
+  "Roadmap",
+  roadmapSchema
+);
+
 export default Roadmap;
