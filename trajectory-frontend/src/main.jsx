@@ -14,6 +14,7 @@ import { AuthProvider } from './context/authContext.jsx'
 import Profile from './pages/Profile.jsx'
 import CourseDetails from './pages/CourseDetails.jsx'
 import Roadmap from './pages/Roadmap.jsx'
+import About from './pages/About.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/about" element={<About />} />
       </Routes>
       </AuthProvider>
     </BrowserRouter>
