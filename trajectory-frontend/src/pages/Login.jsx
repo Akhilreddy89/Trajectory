@@ -45,10 +45,10 @@ function Login() {
 
     try {
       const res = await getLogin(form);
-      console.log("Login response:", res);
       const data = res.data;
+      
       if (data.success) {
-        login(data.token);
+        login(data.token, data.user);
         const profile = await getMyProfile();
 
         if (!profile || !profile.fullName || profile.skills.length === 0) {

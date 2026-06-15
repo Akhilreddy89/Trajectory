@@ -37,6 +37,7 @@ const registerUser = async (req, res) => {
 const getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user).select("-password");
+    console.log("Current user:", user);
     res.json({ success: true, user });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });

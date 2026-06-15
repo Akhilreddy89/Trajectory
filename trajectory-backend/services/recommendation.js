@@ -1,6 +1,10 @@
 import Course from "../models/Course.js";
 import Profile from "../models/Profile.js";
 
+const normalizeArray = (arr) => arr.map((item) => item.toLowerCase());
+const getUniqueMatchedSkills = (courseSkills, userSkills) =>
+  [...new Set(courseSkills)].filter((skill) => userSkills.includes(skill));
+
 export const getRecommendedCourses = async (userId) => {
 
 
@@ -20,6 +24,7 @@ export const getRecommendedCourses = async (userId) => {
   for (const course of courses) {
     let score = 0;
     //we need to check this in user profile completed courses
+    
     const alreadyEnrolled =
       profile.enrolledCourses.some(
         (enrolledCourse) =>
@@ -30,21 +35,18 @@ export const getRecommendedCourses = async (userId) => {
     if (alreadyEnrolled) {
       continue;
     }
-    const userSkills = profile.skills.map(
-      (skill) => skill.name.toLowerCase()
+    const userSkills = normalizeArray(
+      profile.skills.map((skill) => skill.name)
     );
 
-    const courseSkills = course.skills.map(
-      (skill) => skill.toLowerCase()
-    );
+    const courseSkills = normalizeArray(course.skills);
 
-    const matchedSkills = courseSkills.filter(
-      (skill) => userSkills.includes(skill)
+    const matchedSkills = getUniqueMatchedSkills(
+      courseSkills,
+      userSkills
     );
 
     score += matchedSkills.length * 40;
-
-
 
     const userInterests = profile.interests.map(
       (interest) => interest.toLowerCase()
@@ -85,16 +87,11 @@ export const getRecommendedCourses = async (userId) => {
     ) {
       score += 5;
     }
-
-    // Add final score
-
     recommendedCourses.push({
       ...course.toObject(),
       recommendationScore: score,
     });
   }
-
-
   recommendedCourses.sort(
     (a, b) =>
       b.recommendationScore -
@@ -104,9 +101,6 @@ export const getRecommendedCourses = async (userId) => {
 
   return recommendedCourses.slice(0, 20);
 };
-// ============================================
-// ROADMAP STAGE RECOMMENDATIONS
-// ============================================
 
 export const getStageRecommendedCourses = async (
   userId,
@@ -120,11 +114,6 @@ export const getStageRecommendedCourses = async (
   if (!profile) {
     throw new Error("Profile not found");
   }
-
-  // ============================================
-  // FILTER COURSES BY STAGE SKILLS
-  // ============================================
-
   const courses = await Course.find({
     skills: {
       $in: stageSkills,
@@ -137,27 +126,19 @@ export const getStageRecommendedCourses = async (
 
     let score = 0;
 
-    // ============================================
-    // SKILL MATCHING
-    // ============================================
 
-    const userSkills = profile.skills.map(
-      (skill) => skill.name.toLowerCase()
+    const userSkills = normalizeArray(
+      profile.skills.map((skill) => skill.name)
     );
 
-    const courseSkills = course.skills.map(
-      (skill) => skill.toLowerCase()
-    );
+    const courseSkills = normalizeArray(course.skills);
 
-    const matchedSkills = courseSkills.filter(
-      (skill) => userSkills.includes(skill)
+    const matchedSkills = getUniqueMatchedSkills(
+      courseSkills,
+      userSkills
     );
 
     score += matchedSkills.length * 40;
-
-    // ============================================
-    // INTEREST MATCHING
-    // ============================================
 
     const userInterests = profile.interests.map(
       (interest) => interest.toLowerCase()
@@ -171,10 +152,6 @@ export const getStageRecommendedCourses = async (
       score += 25;
     }
 
-    // ============================================
-    // CAREER GOAL MATCHING
-    // ============================================
-
     const careerPaths = course.careerPaths.map(
       (path) => path.toLowerCase()
     );
@@ -187,9 +164,6 @@ export const getStageRecommendedCourses = async (
       score += 20;
     }
 
-    // ============================================
-    // LEARNING STYLE MATCHING
-    // ============================================
 
     if (
       course.type ===
@@ -198,10 +172,6 @@ export const getStageRecommendedCourses = async (
       score += 10;
     }
 
-    // ============================================
-    // DIFFICULTY MATCHING
-    // ============================================
-
     if (
       course.difficulty ===
       profile.preferredDifficultyLevel
@@ -209,23 +179,17 @@ export const getStageRecommendedCourses = async (
       score += 5;
     }
 
-    // ============================================
-    // FINAL SCORE
-    // ============================================
-
     recommendedCourses.push({
       ...course.toObject(),
       recommendationScore: score,
     });
   }
 
-  // Sort descending
   recommendedCourses.sort(
     (a, b) =>
       b.recommendationScore -
       a.recommendationScore
   );
 
-  // Return only top 3 for roadmap stage
   return recommendedCourses.slice(0, 3);
 };

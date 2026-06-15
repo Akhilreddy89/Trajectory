@@ -44,7 +44,7 @@ export const AuthProvider = ({
         }
 
         const data = await res.json();
-        setUser(data);
+        setUser(data.user);
 
       } catch (err) {
         console.error("Error fetching user", err);
@@ -58,14 +58,16 @@ export const AuthProvider = ({
   }, [token]);
 
   // Login
-  const login = (newToken) => {
-
+  const login = (newToken, newUser = null) => {
     localStorage.setItem(
       "token",
       newToken
     );
 
     setToken(newToken);
+    if (newUser) {
+      setUser(newUser);
+    }
   };
 
   // Logout

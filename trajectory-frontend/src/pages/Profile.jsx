@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { updateProfile, getProfile } from "../../services/profileService.js";
-import Navbar from "../components/Navbar.jsx";
 import "../style/Profile.css";
 
 function Profile() {
@@ -224,23 +223,18 @@ function Profile() {
 
   if (loading)
     return (
-      <>
-        <Navbar />
-        <div className="profile-page">
-          <div className="profile-container">
-            <div className="loading-state">
-              <h2>Loading your profile...</h2>
-            </div>
+      <div className="profile-page">
+        <div className="profile-container">
+          <div className="loading-state">
+            <h2>Loading your profile...</h2>
           </div>
         </div>
-      </>
+      </div>
     );
 
   return (
-    <>
-      <Navbar />
-      <div className="profile-page">
-        <div className="profile-container">
+    <div className="profile-page">
+      <div className="profile-container">
           <div className="profile-header">
             <h1>Profile Setup</h1>
             <div className="step-indicator">Step {step} of 5</div>
@@ -613,7 +607,6 @@ function Profile() {
           )}
         </div>
       </div>
-    </>
   );
 }
 

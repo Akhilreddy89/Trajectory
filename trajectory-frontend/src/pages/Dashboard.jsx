@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Recommendations from "./recommendations";
 import { useNavigate } from "react-router-dom";
 import { getCourses } from "../../services/courseServices.js";
-import Navbar from "../components/Navbar";
+import Recommendations from "./Recommendations.jsx";
 
 function Dashboard() {
   const [data, setData] = useState(null);
@@ -27,21 +25,6 @@ function Dashboard() {
 
   return (
     <>
-      <Navbar />
-      <div className="dashboard">
-        <h1>Dashboard</h1>
-        
-        {!data ? (
-          <p>Loading...</p>
-        ) : (
-          <>
-            <p>Welcome back,
-              <bold>{data.user.fullname}</bold>!</p>
-            <p>Here are some courses you might like:</p>
-          </>
-        )}
-        
-      </div>
       <Recommendations/>
     </>
   );

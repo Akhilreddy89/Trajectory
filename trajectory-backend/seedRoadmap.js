@@ -6,10 +6,6 @@ import Roadmap from "./models/Roadmap.js";
 dotenv.config();
 
 
-// ============================================
-// CONNECT DATABASE
-// ============================================
-
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB Connected");
@@ -17,11 +13,6 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => {
     console.log(err);
   });
-
-
-// ============================================
-// ROADMAP DATA
-// ============================================
 
 const roadmapData = [
 

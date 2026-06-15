@@ -1,13 +1,17 @@
 .profile-page {
   min-height: 100vh;
-  padding: 32px;
+  padding: 40px 24px;
   background: radial-gradient(circle at top right, rgba(108, 92, 231, 0.18), transparent 28%),
     linear-gradient(180deg, #f9f8ff 0%, #eef0ff 100%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .profile-container {
-  max-width: 700px;
-  margin: 10px auto 40px;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto 40px;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(108, 92, 231, 0.16);
   border-radius: var(--radius-xl);
