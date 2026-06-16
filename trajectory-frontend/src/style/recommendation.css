@@ -43,3 +43,57 @@
 .recommendations-page p {
     margin: 0;
 }
+
+@media (max-width: 1024px) {
+    .recommendations-page {
+        padding: 1.5rem;
+    }
+
+    .recommendations-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .recommendations-page {
+        padding: 1rem;
+        min-height: auto;
+    }
+
+    .recommendations-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .recommendations-header p {
+        font-size: 0.9rem;
+    }
+
+    .recommendations-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .recommendations-page {
+        padding: 0.75rem;
+    }
+
+    .recommendations-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .recommendations-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .recommendations-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .recommendations-empty {
+        padding: 1.5rem;
+    }
+}

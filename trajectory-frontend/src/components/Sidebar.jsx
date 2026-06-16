@@ -61,7 +61,7 @@ function Sidebar() {
           <div>
             <p className="user-label">Signed in as</p>
             <p className="user-name">
-              {user?user.user.fullname: "Account" ||"Account"}
+              {user?.fullname || "Account"}
               
               
             </p>

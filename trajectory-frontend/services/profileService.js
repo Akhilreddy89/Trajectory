@@ -35,4 +35,14 @@ export const getProfile=async()=>{
       );
       return res.data.profile;
 }
-
+export const getCompletedCourses=async()=>{
+  const res = await axios.get(
+    "http://localhost:5000/api/profile/completed-courses",
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+  return res.data;
+};

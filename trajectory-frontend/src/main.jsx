@@ -19,26 +19,33 @@ import AppLayout from './pages/AppLayout.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/app" element={<ProtectedRoute><App /></ProtectedRoute>} />
-        <Route element={<AppLayout />}>
-        <Route path="/course/:courseId" element={<ProtectedRoute><CourseDetails /></ProtectedRoute>} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        /* change these to actual pages when they are created */
-        <Route path="/progress" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/settings" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
-        <Route path="/roadmap" element={<ProtectedRoute><Roadmap /></ProtectedRoute>} />
-        </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/about" element={<About />} />
+
+            <Route
+              element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }
+            >
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/course/:courseId" element={<CourseDetails />} />
+            <Route path="/progress" element={<Dashboard />} />
+            <Route path="/settings" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/roadmap" element={<Roadmap />} />
+
+            </Route>
+
+          </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>
 )
