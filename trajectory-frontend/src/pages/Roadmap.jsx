@@ -6,6 +6,7 @@ import "../style/Roadmap.css";
 
 function Roadmap() {
     const [roadmap, setRoadmap] = useState(null);
+    const [progress, setProgress] = useState({ percentage: 0, completedCount: 0, totalStages: 0, remaining: 0 });
     const fetchRoadmap = async () => {
         try {
             const res = await axios.get("http://localhost:5000/api/roadmap/me", {
@@ -15,6 +16,7 @@ function Roadmap() {
             });
             console.log(res.data);
             setRoadmap(res.data);
+            if (res.data.progress) setProgress(res.data.progress);
         } catch (err) {
             console.error(err);
         }
@@ -51,6 +53,9 @@ function Roadmap() {
 
                         <section className="roadmap-stages">
                             <h3>Roadmap Stages</h3>
+                            <div className="roadmap-progress">
+                                <strong>Progress:</strong> {progress.percentage}% — {progress.completedCount}/{progress.totalStages} completed ({progress.remaining} remaining)
+                            </div>
                             <ul>
                                 {roadmap.stages.map((stage, index) => (
                                     <li className="roadmap-stage" key={index}>
@@ -75,6 +80,41 @@ function Roadmap() {
                                                     </div>
                                                 ))}
                                             </div>
+                                        </div>
+                                        <div className="roadmap-stage-actions">
+                                            {stage.status !== "completed" ? (
+                                                <button 
+                                                    className="btn-complete-stage" 
+                                                    onClick={async () => {
+                                                        try {
+                                                            const order = stage.order ?? index + 1;
+                                                            const resp = await axios.post(
+                                                                `http://localhost:5000/api/roadmap/complete-stage/${order}`, 
+                                                                {}, 
+                                                                { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+                                                            );
+                                                            
+                                                            if (resp.data) {
+                                                                // Completely swap the roadmap context structure cleanly with the updated fields
+                                                                setRoadmap(resp.data);
+                                                                
+                                                                if (resp.data.progress) {
+                                                                    setProgress(resp.data.progress);
+                                                                }
+                                                                
+                                                                alert("Stage marked completed successfully!");
+                                                            }
+                                                        } catch (err) {
+                                                            console.error("Error patching stage completion metrics:", err);
+                                                            alert('Failed to mark stage completed');
+                                                        }
+                                                    }}
+                                                >
+                                                    Mark Stage Completed
+                                                </button>
+                                            ) : (
+                                                <span className="stage-completed-badge">Completed ✓</span>
+                                            )}
                                         </div>
                                     </li>
                                 ))}

@@ -200,11 +200,13 @@ const markCompleted = async (req, res) => {
       });
     }
 
-    // Find enrolled course
-    const course = profile.enrolledCourses.find(
-      (course) =>
-        course.courseId.toString() === courseId
-    );
+    // Find enrolled course (support both raw ObjectId and populated course objects)
+    const course = profile.enrolledCourses.find((course) => {
+      const storedCourseId = course.courseId?._id
+        ? course.courseId._id
+        : course.courseId;
+      return storedCourseId?.toString() === courseId;
+    });
 
     if (!course) {
       return res.status(404).json({
@@ -219,7 +221,7 @@ const markCompleted = async (req, res) => {
 
     // Get full course data
     const courseData = await Course.findById(
-      course.courseId
+      course.courseId?._id || course.courseId
     );
 
     if (!courseData) {

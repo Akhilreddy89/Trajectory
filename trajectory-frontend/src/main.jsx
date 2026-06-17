@@ -15,6 +15,7 @@ import Profile from './pages/Profile.jsx'
 import CourseDetails from './pages/CourseDetails.jsx'
 import Roadmap from './pages/Roadmap.jsx'
 import About from './pages/About.jsx'
+import Courses from './pages/Courses.jsx'
 import AppLayout from './pages/AppLayout.jsx'
 
 createRoot(document.getElementById('root')).render(
@@ -41,7 +42,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/profile" element={<Profile />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/roadmap" element={<Roadmap />} />
-
+            <Route path="/courses" element={<Courses />} />
             </Route>
 
           </Routes>

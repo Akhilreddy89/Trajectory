@@ -120,6 +120,9 @@ const profileSchema = new mongoose.Schema(
             type: String,
             required: true
           },
+          order: {
+            type: Number
+          },
           status: {
             type: String,
             enum: ["pending", "in-progress", "completed"],

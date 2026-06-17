@@ -1,0 +1,32 @@
+.courses-page {
+    min-height: calc(100vh - 100px);
+    background: #f5f7fb;
+}
+
+.courses-topbar {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem 2rem;
+}
+
+.courses-topbar h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1f2937;
+}
+
+.courses-topbar p {
+    margin-top: 0.35rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .courses-topbar {
+        padding: 1.25rem 1rem;
+    }
+
+    .courses-topbar h1 {
+        font-size: 1.25rem;
+    }
+}

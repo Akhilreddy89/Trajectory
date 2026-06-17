@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../style/CourseDetails.css";
@@ -12,21 +12,39 @@ function CourseDetails() {
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    const fetchCourseDetails = async () => {
+    const fetchCourseDetailsAndStatus = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/course/${courseId}`
-        );
+        setLoading(true);
+        
+        // Fetch course core payload data
+        const res = await axios.get(`http://localhost:5000/api/course/${courseId}`);
         setCourse(res.data.course);
-        setLoading(false);
+
+        // Optional cross-check against saved bookmark states if authenticated
+        const token = localStorage.getItem("token");
+        if (token) {
+          try {
+            const savedRes = await axios.get("http://localhost:5000/api/saved-courses", {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            // Inspect array elements matchers
+            const alreadyBookmarked = savedRes.data.savedCourses?.some(
+              (item) => item.courseId?._id === courseId || item.courseId === courseId
+            );
+            if (alreadyBookmarked) setIsSaved(true);
+          } catch (statusErr) {
+            console.log("Non-critical bookmark state sync pass:", statusErr.message);
+          }
+        }
       } catch (err) {
         console.error("Error fetching course:", err);
-        setError("Failed to load course details");
+        setError("Failed to load course details. Please return later.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchCourseDetails();
+    fetchCourseDetailsAndStatus();
   }, [courseId]);
 
   const handleSaveCourse = async () => {
@@ -41,11 +59,7 @@ function CourseDetails() {
       await axios.post(
         `http://localhost:5000/api/save-course/${courseId}`,
         { courseId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setIsSaved(true);
@@ -61,72 +75,114 @@ function CourseDetails() {
     }
   };
 
-  if (loading) return <div className="course-details"><p>Loading...</p></div>;
-  if (error) return <div className="course-details"><p className="error">{error}</p></div>;
-  if (!course) return <div className="course-details"><p>Course not found</p></div>;
+  if (loading) {
+    return (
+      <div className="details-loader-view">
+        <div className="details-spinner"></div>
+        <p>Fetching dynamic module parameters...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="details-loader-view">
+        <div className="error-card">
+          <p className="error-text">⚠️ {error}</p>
+          <button className="back-button-fallback" onClick={() => navigate(-1)}>Go Back</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="details-loader-view">
+        <p>Requested course module context could not be located.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="course-details">
+    <div className="course-details-page">
       <div className="course-details-container">
-        <button className="back-button" onClick={() => navigate(-1)}>
-          ← Back
+        
+        {/* Navigation Action header control */}
+        <button className="back-navigation-btn" onClick={() => navigate(-1)}>
+          ← Back to Explorer
         </button>
 
-        <h1 className="course-title">{course.title}</h1>
-
-        <div className="course-meta">
-          <span className="course-source">Source: {course.source}</span>
-          <span className="course-level">Level: {course.level}</span>
-          <span className="course-type">Type: {course.type}</span>
-          <span className="course-category">Category: {course.category}</span>
+        {/* Course Header */}
+        <div className="details-main-header">
+          <h1 className="course-title-display">{course.title}</h1>
+          
+          {/* Elegant Unified Meta Tags */}
+          <div className="course-meta-tags-row">
+            <span className="meta-tag tag-source">🏛️ {course.source}</span>
+            <span className="meta-tag tag-level">🎯 {course.level}</span>
+            {course.type && <span className="meta-tag tag-type">⚡ {course.type}</span>}
+            <span className="meta-tag tag-category">📁 {course.category}</span>
+          </div>
         </div>
 
-        <div className="course-description">
-          <h2>Description</h2>
-          <p>{course.description}</p>
+        {/* Course Description */}
+        <div className="details-content-section">
+          <h2>Overview & Scope</h2>
+          <p className="description-text-block">{course.description}</p>
         </div>
 
+        {/* Dynamic Skills Array Map Grid */}
         {course.skills && course.skills.length > 0 && (
-          <div className="course-skills">
-            <h2>Skills You'll Learn</h2>
-            <ul>
-              {course.skills.map((skill, index) => (
-                <li key={index}>{skill}</li>
-              ))}
-            </ul>
+          <div className="details-content-section">
+            <h2>Skills You'll Master</h2>
+            <div className="skills-pill-box-flex">
+              {course.skills.map((skill, index) => {
+                const targetLabel = typeof skill === "object" && skill !== null ? skill.name : skill;
+                return (
+                  <span key={index} className="pill-learning-node">
+                    {targetLabel}
+                  </span>
+                );
+              })}
+            </div>
           </div>
         )}
 
+        {/* Career Targets Maps */}
         {course.careerPaths && course.careerPaths.length > 0 && (
-          <div className="course-careers">
-            <h2>Career Paths</h2>
-            <ul>
+          <div className="details-content-section">
+            <h2>Target Professional Paths</h2>
+            <div className="careers-pill-box-flex">
               {course.careerPaths.map((path, index) => (
-                <li key={index}>{path}</li>
+                <span key={index} className="pill-career-node">
+                  💼 {path}
+                </span>
               ))}
-            </ul>
+            </div>
           </div>
         )}
 
-        <div className="course-actions">
+        {/* Execution Actions Footnotes Panel */}
+        <div className="course-actions-footer-bar">
           {course.url && (
             <a
               href={course.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-primary"
+              className="action-cta-btn launch-primary-btn"
             >
-              Go to Course
+              Start Learning Now →
             </a>
           )}
           <button
-            className={`btn ${isSaved ? "btn-saved" : "btn-secondary"}`}
+            className={`action-cta-btn ${isSaved ? "saved-disabled-btn" : "save-secondary-btn"}`}
             onClick={handleSaveCourse}
             disabled={isSaved}
           >
-            {isSaved ? "✓ Saved" : "Save Course"}
+            {isSaved ? "✓ Added to Workspace" : "Bookmark Course"}
           </button>
         </div>
+
       </div>
     </div>
   );

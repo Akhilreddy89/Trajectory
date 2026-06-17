@@ -6,7 +6,7 @@
 
 .recommendations-header {
     max-width: 1000px;
-    margin: 0 auto 2rem;
+    margin: 0 auto 1.5rem;
     text-align: center;
 }
 
@@ -20,6 +20,38 @@
     margin-top: 0.75rem;
     color: #4b5563;
     font-size: 1rem;
+}
+
+.recommendations-filters {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.filter-pill {
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #4b5563;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.filter-pill:hover {
+    border-color: #6c5ce7;
+    color: #6c5ce7;
+}
+
+.filter-pill.active {
+    background: #6c5ce7;
+    border-color: #6c5ce7;
+    color: #ffffff;
 }
 
 .recommendations-grid {
@@ -42,6 +74,19 @@
 
 .recommendations-page p {
     margin: 0;
+}
+
+.course-card-skeleton {
+    height: 320px;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #ececec 25%, #f5f5f5 50%, #ececec 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 @media (max-width: 1024px) {

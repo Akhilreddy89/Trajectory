@@ -1,68 +1,160 @@
-import React from "react";
-import axios from "axios";
-import { useEffect,useState } from "react";
-import { getSavedCourses,deleteSavedCourse,completedCourse } from "../../services/courseServices.js";
-import "../style/Home.css";
-function Bookmarks() {
-    const [savedCourses, setSavedCourses] = useState([]);
+import React, { useEffect, useState } from "react";
+import { getSavedCourses, deleteSavedCourse, completedCourse } from "../../services/courseServices.js";
+import { getCompletedCourses } from "../../services/profileService.js";
+import CourseCard from "../components/CourseCard.jsx";
+import "../style/bookmarks.css";
 
-    const getCourses = async() => {
-        try{
-            const res = await getSavedCourses();
-            console.log("Saved courses response:", res.data);
-            setSavedCourses(res.data.savedCourses);
-            console.log("Saved courses set in state:", res.data.savedCourses);
-        }
-        catch (err) {
-            console.error(err);
+function Bookmarks() {
+    const [activeTab, setActiveTab] = useState("saved");
+    const [savedCourses, setSavedCourses] = useState([]);
+    const [completedCourses, setCompletedCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchAllDashboardData = async () => {
+        try {
+            setLoading(true);
+            const [savedRes, completedRes] = await Promise.allSettled([
+                getSavedCourses(),
+                getCompletedCourses()
+            ]);
+
+            if (savedRes.status === "fulfilled") {
+                const rawSavedData = savedRes.value?.data || savedRes.value;
+                setSavedCourses(rawSavedData?.savedCourses || []);
+            }
+            
+            if (completedRes.status === "fulfilled") {
+                const rawCompletedData = completedRes.value?.data || completedRes.value;
+                
+                if (rawCompletedData && rawCompletedData.completedCourses) {
+                    setCompletedCourses(rawCompletedData.completedCourses);
+                } else if (Array.isArray(rawCompletedData)) {
+                    setCompletedCourses(rawCompletedData);
+                } else {
+                    setCompletedCourses([]);
+                }
+            }
+        } catch (err) {
+            console.error("Error aggregating workspace datasets:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        getCourses();
+        fetchAllDashboardData();
     }, []);
-    const deleteCourse = async (courseId) => {
+
+    const deleteCourse = async (e, bookmarkId) => {
+        e.stopPropagation();
         try {
-            await deleteSavedCourse(courseId);
-            alert("Course deleted successfully!");
-            await getCourses();
+            await deleteSavedCourse(bookmarkId);
+            alert("Course removed from bookmarks!");
+            fetchAllDashboardData();
         } catch (err) {
             console.error(err);
-            alert("Failed to delete course.");
+            alert("Failed to remove course.");
         }
     };
-    const handleMarkCompleted = async (courseId) => {
+
+    const handleMarkCompleted = async (e, courseId) => {
+        e.stopPropagation();
         try {
             await completedCourse(courseId);
             alert("Course marked as completed!");
-            getCourses(); // Refresh the list after marking as completed
+            await fetchAllDashboardData();
         } catch (err) {
             console.error(err);
             alert("Failed to mark course as completed.");
         }
     };
-  return (
-    <div className="bookmarks">
-        <h1>Your Bookmarked Courses</h1>
-        <div>
-            {savedCourses.length === 0 ? (
-                <p>You have no bookmarked courses.</p>
-            ) : (
-                savedCourses.map((savedCourse) => (
-                    <div key={savedCourse._id}>
-                        <p>{savedCourse.courseId?.title}</p>
-                        <p>{savedCourse.courseId?.description}</p>
-                        <p>{savedCourse.courseId?.source}</p>
-                        <p>{savedCourse.courseId?.category}</p>
-                        <p>{savedCourse.courseId?.skills?.join(", ")}</p>
-                        <button onClick={() => deleteCourse(savedCourse._id)}>Delete</button>
-                        <button onClick={()=> handleMarkCompleted(savedCourse.courseId._id)}>Mark as Completed</button>
-                        <p>------------------------------------------</p>
+
+    if (loading) {
+        return (
+            <div className="space-loading-view">
+                <div className="space-spinner"></div>
+                <p>Loading your courses...</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="bookmarks-container">
+            <div className="space-header-block">
+                <h1 className="bookmarks-header-title">My Learning Workspace</h1>
+                
+                <div className="workspace-tabs-menu">
+                    <button 
+                        className={`tab-toggle-btn ${activeTab === "saved" ? "active" : ""}`}
+                        onClick={() => setActiveTab("saved")}
+                    >
+                        Saved Courses <span>{savedCourses.length}</span>
+                    </button>
+                    <button 
+                        className={`tab-toggle-btn ${activeTab === "completed" ? "active" : ""}`}
+                        onClick={() => setActiveTab("completed")}
+                    >
+                        Completed <span>{completedCourses.length}</span>
+                    </button>
+                </div>
+            </div>
+
+            {activeTab === "saved" ? (
+                savedCourses.length === 0 ? (
+                    <div className="empty-bookmarks">
+                        <p>You have no bookmarked courses yet.</p>
                     </div>
-                ))
+                ) : (
+                    <div className="courses-grid">
+                        {savedCourses.map((savedCourse) => {
+                            if (!savedCourse.courseId) return null;
+                            return (
+                                <div key={savedCourse._id} className="bookmark-card-wrapper">
+                                    <button 
+                                        className="bookmark-delete-badge"
+                                        onClick={(e) => deleteCourse(e, savedCourse._id)}
+                                        title="Remove Bookmark"
+                                    >
+                                        🗑️
+                                    </button>
+                                    <CourseCard course={savedCourse.courseId} />
+                                    <div className="bookmark-actions-bar">
+                                        <button 
+                                            className="action-btn complete-btn"
+                                            onClick={(e) => handleMarkCompleted(e, savedCourse.courseId._id)}
+                                        >
+                                            ✓ Mark as Completed
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )
+            ) : (
+                completedCourses.length === 0 ? (
+                    <div className="empty-bookmarks">
+                        <p>No completed courses found yet. Keep learning! 🚀</p>
+                    </div>
+                ) : (
+                    <div className="courses-grid">
+                        {completedCourses.map((item) => {
+                            const targetCourseDetails = item.courseId;
+                            if (!targetCourseDetails) return null;
+                            return (
+                                <div key={item._id} className="bookmark-card-wrapper completed-greyed-card">
+                                    <div className="completed-success-ribbon">
+                                        Completed ✓
+                                    </div>
+                                    <CourseCard course={targetCourseDetails} />
+                                </div>
+                            );
+                        })}
+                    </div>
+                )
             )}
         </div>
-    </div>
-  );
+    );
 }
+
 export default Bookmarks;
