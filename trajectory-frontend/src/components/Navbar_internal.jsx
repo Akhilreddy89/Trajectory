@@ -1,8 +1,9 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import "../style/Navbar.css";
+import { useAuth } from "../context/AuthContext";
+import "../style/Navbar_internal.css";
 
-function Navbars() {
+function Navbar() {
   const location = useLocation();
 
   // Helper function to map pathnames to clean dashboard page titles
@@ -29,20 +30,30 @@ function Navbars() {
       </div>
 
       <div className="navbar-right">
-        <div className="search-box">
-          <span className="search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder="Search courses..."
-          />
-        </div>
+        {(() => {
+          const { loading, isAuthenticated } = useAuth();
 
-        <button className="icon-btn" title="Notifications">
-          🔔
-        </button>
+          if (loading || !isAuthenticated) return null;
+
+          return (
+            <>
+              <div className="search-box">
+                <span className="search-icon">🔍</span>
+                <input
+                  type="text"
+                  placeholder="Search courses..."
+                />
+              </div>
+
+              <button className="icon-btn" title="Notifications">
+                🔔
+              </button>
+            </>
+          );
+        })()}
       </div>
     </header>
   );
 }
 
-export default Navbars;
+export default Navbar;

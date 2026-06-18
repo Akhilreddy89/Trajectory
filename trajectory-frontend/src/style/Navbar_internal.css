@@ -1,0 +1,124 @@
+:root {
+  --ink-main: #111827;
+  --ink-sub: #4b5563;
+  --primary: #6366f1;
+  --bg-light: #f3f4f6;
+  --border-light: #e5e7eb;
+}
+
+/* Master header container with explicit height and roomy vertical breathing space */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;          /* Clean horizontal alignment */
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-light);
+  height: 88px;             /* Taller, distinct dashboard footprint */
+  min-height: 88px;
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Left side alignment structure */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.page-title {
+  font-size: 1.6rem;        /* Slightly larger scale to match header height */
+  font-weight: 800;
+  color: var(--ink-main);
+  margin: 0;                /* Resets default margins */
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* Right side actions and utilities bar alignment */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;                /* Roomier gaps between items */
+  height: 100%;
+}
+
+/* Redesigned dashboard search panel layout matrix */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: var(--bg-light);
+  border: 1px solid transparent;
+  border-radius: 12px;      /* Smoother modern corners */
+  padding: 12px 16px;       /* Taller inner breathing room */
+  width: 280px;             /* Generous width allocation */
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.search-box:focus-within {
+  background: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.search-icon {
+  font-size: 1rem;
+  color: #9ca3af;
+  user-select: none;
+}
+
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--ink-main);
+}
+
+.search-box input::placeholder {
+  color: #9ca3af;
+}
+
+/* Circular utility action buttons (Notifications, etc.) */
+.icon-btn {
+  background: var(--bg-light);
+  border: none;
+  width: 44px;              /* Proportionately larger to match search-box vertical alignment */
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.icon-btn:hover {
+  background: var(--border-light);
+}
+
+.icon-btn:active {
+  transform: scale(0.96);
+}
+
+/* Mobile viewport overrides grid parameters layout */
+@media (max-width: 768px) {
+  .navbar {
+    height: 76px;           /* Scales down slightly on smaller mobile touch viewports */
+    min-height: 76px;
+    padding: 0 20px;
+  }
+  
+  .page-title {
+    font-size: 1.3rem;
+  }
+  
+  .search-box {
+    display: none;          /* Keeps screen real estate clear of cluttered line-wrapping text items */
+  }
+}
