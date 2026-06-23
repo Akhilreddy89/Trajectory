@@ -168,7 +168,7 @@ function Personalinfo() {
       {/* Upper Action Header */}
       <div className="dashboard-header">
         <div className="welcome-meta">
-          <h1>Good Evening, {profile.fullName || "Learner"} 👋</h1>
+          <h1>Good Evening, {profile.fullName || "Learner"} </h1>
           <p>Continue your global path toward becoming a premier <strong>{profile.careerGoal || "Tech Professional"}</strong>.</p>
         </div>
         <Link to="/roadmap">
@@ -181,7 +181,6 @@ function Personalinfo() {
       {/* Grid Row Metrics Cards */}
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon-wrapper blue-tint">⏱️</div>
           <div className="stat-text-block">
             <h3>Weekly Commitment</h3>
             <span>{profile.weeklyLearningHours} hrs</span>
@@ -189,7 +188,6 @@ function Personalinfo() {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper orange-tint">🔥</div>
           <div className="stat-text-block">
             <h3>Current Streak</h3>
             <span>0 Days</span>
@@ -197,7 +195,6 @@ function Personalinfo() {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper green-tint">🎉</div>
           <div className="stat-text-block">
             <h3>Completed Modules</h3>
             <span>{completedCount}</span>
@@ -205,7 +202,6 @@ function Personalinfo() {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper purple-tint">🎯</div>
           <div className="stat-text-block">
             <h3>Roadmap Progress</h3>
             <span>{progress.percentage}%</span>

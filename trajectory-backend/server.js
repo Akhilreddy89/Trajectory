@@ -23,9 +23,6 @@ app.use("/api", courseRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/roadmap", roadmapRouter);
 
-app.get('/',(req,res)=>{
-    res.json("hello");
-})
 
 connectDB();
 app.listen(5000,()=>{

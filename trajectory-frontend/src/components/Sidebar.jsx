@@ -6,13 +6,13 @@ function Sidebar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const navItems = [
-    { name: "Dashboard", path: "/dashboard", icon: "📊" },
-    { name: "Roadmap", path: "/roadmap", icon: "↗" },
-    { name: "Courses", path: "/courses", icon: "📚" },
-    { name: "Bookmarks", path: "/bookmarks", icon: "🔖" },
-    { name: "Progress", path: "/progress", icon: "📈" },
-    { name: "Profile", path: "/profile", icon: "👤" },
-    { name: "Settings", path: "/settings", icon: "⚙️" },
+    { name: "Dashboard", path: "/dashboard"},
+    { name: "Roadmap", path: "/roadmap"},
+    { name: "Courses", path: "/courses" },
+    { name: "Bookmarks", path: "/bookmarks"},
+    { name: "Progress", path: "/progress" },
+    { name: "Profile", path: "/profile" },
+    { name: "Settings", path: "/settings" },
   ];
   return (
     <aside className="sidebar">
