@@ -59,6 +59,10 @@
   gap: 12px;
   margin-bottom: 48px;
 }
+.item_names{
+  font-weight: 500;
+  font-size: 14px;
+}
 
 .logo-box {
   width: 42px;
@@ -81,8 +85,12 @@
 
 .sidebar nav {
   display: grid;
-  gap: 4px;
+  gap: 2px;
 }
+.sidebar-nav-account {
+  margin-top: 12px;
+}
+
 
 .nav-item {
   display: flex;
@@ -93,7 +101,7 @@
   border-radius: 14px;
 
   text-decoration: none;
-  color: #4b5563;
+  color: #070707;
 
   margin-bottom: 6px;
 

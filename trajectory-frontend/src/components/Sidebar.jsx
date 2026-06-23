@@ -32,13 +32,12 @@ function Sidebar() {
               isActive ? "nav-item active" : "nav-item"
             }
           >
-            <span>{item.icon}</span>
-            <span>{item.name}</span>
+            <span className="item_names">{item.name}</span>
           </NavLink>
         ))}
       </nav>
 
-      <p className="sidebar-heading">ACCOUNT</p>
+      <p className="sidebar-heading sidebar-nav-account" >ACCOUNT</p>
 
       <nav className="sidebar-nav">
         {navItems.slice(5).map((item) => (
@@ -49,8 +48,7 @@ function Sidebar() {
               isActive ? "nav-item active" : "nav-item"
             }
           >
-            <span>{item.icon}</span>
-            <span>{item.name}</span>
+            <span className="item_names">{item.name}</span>
           </NavLink>
         ))}
       </nav>
