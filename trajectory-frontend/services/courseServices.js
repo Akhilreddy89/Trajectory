@@ -1,48 +1,47 @@
 import axios from "axios";
+import api from "./api";
 export const getCourses = async () => {
-    const res = await axios.get(
-        "http://localhost:5000/api/dashboard",
-        {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        }
-    );
-    return res;
-    console.log(res.data);
+    try{
+        const res = await api.get("/dashboard");
+        return res;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
 };
 export const getSavedCourses = async () => {
-    const res = await axios.get(
-        "http://localhost:5000/api/saved-courses",
-        {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        }
-    );
-    return res;
-    console.log(res.data);
-}
+    try {
+        const res = await api.get("/saved-courses");
+        return res;
+    } catch (error) {
+        console.error("Error fetching saved courses:", error);
+        throw error;
+    }
+};
 export const deleteSavedCourse = async (courseId) => {
-    const res = await axios.delete(
-        `http://localhost:5000/api/delete-saved-course/${courseId}`,
-        {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        }
-    );
-    return res;
-}
+    try {
+        const res = await api.delete(`/delete-saved-course/${courseId}`);
+        return res;
+    } catch (error) {
+        console.error("Error deleting saved course:", error);
+        throw error;
+    }
+};
 export const completedCourse = async (courseId) => {
-    const res = await axios.post(
-        `http://localhost:5000/api/mark-completed/${courseId}`,
-        {},
-        {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        }
-    );
-    return res;
-}
+    try {
+        const res = await api.post(`/mark-completed/${courseId}`, {});
+        return res;
+    } catch (error) {
+        console.error("Error marking course as completed:", error);
+        throw error;
+    }
+};
+export const getCompletedCourses = async () => {
+    try {
+        const res = await api.get("/completed-courses");
+        return res;
+    } catch (error) {
+        console.error("Error fetching completed courses:", error);
+        throw error;
+    }
+};

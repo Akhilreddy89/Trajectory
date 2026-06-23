@@ -1,48 +1,33 @@
 import axios from "axios";
-
+import api from "./api";
 export const getMyProfile = async () => {
-  const res = await axios.get(
-    "http://localhost:5000/api/profile/me",
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    }
-  );
-
-  return res.data.profile;
+  try {
+    const res = await api.get("/profile/me");
+    return res.data.profile;
+  } catch (error) {
+    console.error("Error fetching my profile:", error);
+    throw error;
+  }
 };
 
 export const updateProfile = async (profile) => {
-  const res=await axios.put(
-    "http://localhost:5000/api/profile",profile,
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-    }
-    );
+  try {
+    const res = await api.put("/profile", profile);
     return res.data.profile;
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw error;
+  }
 };
-export const getProfile=async()=>{
-     const res = await axios.get(
-        "http://localhost:5000/api/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      return res.data.profile;
-}
-export const getCompletedCourses=async()=>{
-  const res = await axios.get(
-    "http://localhost:5000/api/profile/completed-courses",
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    }
-  );
-  return res.data;
+
+export const getProfile = async () => {
+  try {
+    const res = await api.get("/profile");
+    return res.data.profile;
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    throw error;
+  }
 };
+
+

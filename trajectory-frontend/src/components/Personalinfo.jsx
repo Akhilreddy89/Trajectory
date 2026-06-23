@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getProfile, getCompletedCourses } from "../../services/profileService.js";
+import { getProfile } from "../../services/profileService.js";
 import { getRecommendations } from "../../services/recomendationServives.js";
+import {
+  getCompleteRoadmap,
+  currentStage,
+} from "../../services/roadmapServices.js";
+import {
+  getSavedCourses,
+  getCompletedCourses,
+} from "../../services/courseServices.js";
 import "../style/personalinfo.css";
 
 function Personalinfo() {
   const navigate = useNavigate();
-  const [completedCount, setCompletedCount] = useState(0);
-  const [recommendations, setRecommendations] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
   const [profile, setProfile] = useState({
     fullName: "",
     college: "",
@@ -21,49 +30,124 @@ function Personalinfo() {
     preferredDifficultyLevel: "beginner",
     weeklyLearningHours: 5,
   });
-  const [loading, setLoading] = useState(true);
+
+  const [recommendations, setRecommendations] = useState([]);
+  const [savedCourses, setSavedCourses] = useState([]);
+  const [completedCourses, setCompletedCourses] = useState([]);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [roadmap, setRoadmap] = useState(null);
+
+  const [progress, setProgress] = useState({
+    percentage: 0,
+    completedCount: 0,
+    totalStages: 0,
+    remaining: 0,
+  });
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        // Execute fetches concurrently
-        const [profileRes, completedRes, recommendationsRes] = await Promise.allSettled([
+
+        const [
+          profileRes,
+          recommendationsRes,
+          roadmapRes,
+          savedRes,
+          completedRes,
+        ] = await Promise.allSettled([
           getProfile(),
+          getRecommendations(),
+          getCompleteRoadmap(),
+          getSavedCourses(),
           getCompletedCourses(),
-          getRecommendations()
         ]);
 
-        if (profileRes.status === "fulfilled" && profileRes.value) {
+        // Profile
+        if (profileRes.status === "fulfilled") {
           const p = profileRes.value;
+
           setProfile({
-            fullName: p.fullName || "",
-            college: p.college || "",
-            branch: p.branch || "",
-            year: p.year || "",
-            careerGoal: p.careerGoal || "",
-            skills: p.skills || [],
-            interests: p.interests || [],
-            learningGoals: p.learningGoals || [],
-            preferredLearningStyle: p.preferredLearningStyle || "video",
-            preferredDifficultyLevel: p.preferredDifficultyLevel || "beginner",
-            weeklyLearningHours: p.weeklyLearningHours || 5,
+            fullName: p?.fullName || "",
+            college: p?.college || "",
+            branch: p?.branch || "",
+            year: p?.year || "",
+            careerGoal: p?.careerGoal || "",
+            skills: p?.skills || [],
+            interests: p?.interests || [],
+            learningGoals: p?.learningGoals || [],
+            preferredLearningStyle:
+              p?.preferredLearningStyle || "video",
+            preferredDifficultyLevel:
+              p?.preferredDifficultyLevel || "beginner",
+            weeklyLearningHours:
+              p?.weeklyLearningHours || 5,
           });
-        } else if (profileRes.status === "rejected") {
+        } else {
           console.error("Profile fetch failed:", profileRes.reason);
         }
 
-        if (completedRes.status === "fulfilled" && completedRes.value) {
-          setCompletedCount(completedRes.value.count || 0);
+        // Recommendations
+        if (recommendationsRes.status === "fulfilled") {
+          setRecommendations(
+            recommendationsRes.value?.data?.courses || []
+          );
+        } else {
+          console.error(
+            "Recommendations fetch failed:",
+            recommendationsRes.reason
+          );
         }
 
-        if (recommendationsRes.status === "fulfilled" && recommendationsRes.value?.data) {
-          setRecommendations(recommendationsRes.value.data.courses || []);
+        // Roadmap + Progress
+        if (roadmapRes.status === "fulfilled") {
+          const roadmapData = roadmapRes.value?.data;
+
+          if (roadmapData) {
+            const activeStage = await currentStage(roadmapData);
+
+            setRoadmap(activeStage);
+
+            if (roadmapData.progress) {
+              setProgress(roadmapData.progress);
+            }
+          }
+        } else {
+          console.error("Roadmap fetch failed:", roadmapRes.reason);
         }
 
-        setLoading(false);
+        // Saved Courses
+        if (savedRes.status === "fulfilled") {
+          setSavedCourses(
+            savedRes.value?.data?.savedCourses || []
+          );
+        } else {
+          console.error("Saved courses fetch failed:", savedRes.reason);
+        }
+
+        // Completed Courses
+        if (completedRes.status === "fulfilled") {
+          const data = completedRes.value?.data || completedRes.value;
+
+          const courses =
+            data?.completedCourses ||
+            data?.courses ||
+            [];
+
+          setCompletedCourses(courses);
+
+          setCompletedCount(
+            data?.count || courses.length
+          );
+        } else {
+          console.error(
+            "Completed courses fetch failed:",
+            completedRes.reason
+          );
+        }
       } catch (err) {
-        console.error("Dashboard data fetching anomaly:", err);
+        console.error("Dashboard fetch error:", err);
+      } finally {
         setLoading(false);
       }
     };
@@ -79,7 +163,6 @@ function Personalinfo() {
       </div>
     );
   }
-
   return (
     <section className="personal-info">
       {/* Upper Action Header */}
@@ -125,7 +208,7 @@ function Personalinfo() {
           <div className="stat-icon-wrapper purple-tint">🎯</div>
           <div className="stat-text-block">
             <h3>Roadmap Progress</h3>
-            <span>42%</span>
+            <span>{progress.percentage}%</span>
           </div>
         </div>
       </div>
@@ -147,15 +230,15 @@ function Personalinfo() {
               </div>
               <div className="meta-chunk">
                 <p className="label">Active Block Stage</p>
-                <h4>REST APIs Development</h4>
+                <h4>{roadmap.title || "Not Started"}</h4>
               </div>
             </div>
 
             <div className="progress-wrapper">
               <div className="progress-label-bar-group">
-                <span className="progress-percentage-flag">42% Overall Track Completion</span>
+                <span className="progress-percentage-flag">{progress.percentage}% Overall Track Completion</span>
                 <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "42%" }} />
+                  <div className="progress-fill" style={{ width: `${progress.percentage}%` }} />
                 </div>
               </div>
             </div>
@@ -192,7 +275,7 @@ function Personalinfo() {
         <div className="card micro-metric-card">
           <h2>Bookmarked Items</h2>
           <div className="big-number-display">
-            <span className="numerical-metric">18</span>
+            <span className="numerical-metric">{savedCourses.length}</span>
             <span className="metric-context-label">Courses Saved</span>
           </div>
         </div>
@@ -205,15 +288,16 @@ function Personalinfo() {
           <ul className="activity-list">
             <li>
               <span className="activity-bullet green-node"></span>
-              <p>Successfully completed <strong>HTML Structural Semantics</strong> module</p>
+              <p>Successfully completed <strong>{completedCourses[0]?.courseId.title || "a course"}</strong> module</p>
             </li>
             <li>
               <span className="activity-bullet blue-node"></span>
-              <p>Added <strong>React Custom Hooks Engine Architecture</strong> to saved items</p>
+
+              <p>Added <strong>{savedCourses[0]?.courseId.title || "a course"}</strong> to saved items</p>
             </li>
             <li>
               <span className="activity-bullet purple-node"></span>
-              <p>Initiated learning branch for <strong>REST APIs Secure Routing</strong></p>
+              <p>Initiated learning branch for <strong>{roadmap.title || "a course"}</strong></p>
             </li>
           </ul>
         </div>

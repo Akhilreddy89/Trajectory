@@ -1,14 +1,12 @@
- import axios from "axios";
-
+import axios from "axios";
+import api from "./api";
 export const getLogin = async (form) => {
   try {
-    const res = await axios.post(
-      "http://localhost:5000/api/login",
+    const res = await api.post("/login", form);
       form,
       {
         withCredentials: true,
       }
-    );
     if (res.status === 200) {
       localStorage.setItem("token", res.data.token);
     }
@@ -37,13 +35,7 @@ export const getLogin = async (form) => {
 
 export const getRegister = async (form) => {
   try {
-    const res = await axios.post(
-      "http://localhost:5000/api/register",
-      form,
-      {
-        withCredentials: true,
-      }
-    );
+    const res = await api.post("/register", form);
     return res;
   } catch (error) {
     // Handle different HTTP status codes

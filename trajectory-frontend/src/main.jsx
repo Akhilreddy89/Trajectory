@@ -26,6 +26,8 @@ import Courses from "./pages/Courses.jsx";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 import AppLayout from "./pages/AppLayout.jsx";
 import PublicRoute from "./pages/PublicRoute.jsx";
+import Settings from "./pages/Settings.jsx";
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -60,7 +62,7 @@ createRoot(document.getElementById("root")).render(
 
               <Route
                 path="/settings"
-                element={<Dashboard />}
+                element={<Settings />}
               />
 
               <Route

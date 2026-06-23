@@ -6,7 +6,8 @@ import {
   homecourses,
   deleteCourse,
   markCompleted,
-  getCourseById
+  getCourseById,
+  getCompletedCourses
 } from "../controllers/courseController.js";
 
 const courseRouter = Router();
@@ -16,4 +17,5 @@ courseRouter.get('/saved-courses', authMiddleware, getSavedCourses);
 courseRouter.delete('/delete-saved-course/:courseId', authMiddleware,deleteCourse);
 courseRouter.post('/mark-completed/:courseId', authMiddleware,markCompleted);
 courseRouter.get('/home/courses', authMiddleware, homecourses);
+courseRouter.get('/completed-courses', authMiddleware, getCompletedCourses);
 export default courseRouter;

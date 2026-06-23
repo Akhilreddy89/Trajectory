@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import CourseCard from "../components/CourseCard.jsx";
+import { completeStage, getCompleteRoadmap } from "../../services/roadmapServices.js";
 import "../style/Roadmap.css";
 
 
@@ -9,12 +10,7 @@ function Roadmap() {
     const [progress, setProgress] = useState({ percentage: 0, completedCount: 0, totalStages: 0, remaining: 0 });
     const fetchRoadmap = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/roadmap/me", {
-                headers: {
-                     Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            console.log(res.data);
+            const res = await getCompleteRoadmap();
             setRoadmap(res.data);
             if (res.data.progress) setProgress(res.data.progress);
         } catch (err) {
@@ -88,11 +84,8 @@ function Roadmap() {
                                                     onClick={async () => {
                                                         try {
                                                             const order = stage.order ?? index + 1;
-                                                            const resp = await axios.post(
-                                                                `http://localhost:5000/api/roadmap/complete-stage/${order}`, 
-                                                                {}, 
-                                                                { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-                                                            );
+                                                            const resp = await completeStage(order);
+                                                            
                                                             
                                                             if (resp.data) {
                                                                 // Completely swap the roadmap context structure cleanly with the updated fields

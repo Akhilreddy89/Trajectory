@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSavedCourses, deleteSavedCourse, completedCourse } from "../../services/courseServices.js";
-import { getCompletedCourses } from "../../services/profileService.js";
+import { getSavedCourses, deleteSavedCourse, completedCourse,getCompletedCourses } from "../../services/courseServices.js";
 import CourseCard from "../components/CourseCard.jsx";
 import "../style/bookmarks.css";
 
@@ -88,13 +87,13 @@ function Bookmarks() {
                         className={`tab-toggle-btn ${activeTab === "saved" ? "active" : ""}`}
                         onClick={() => setActiveTab("saved")}
                     >
-                        Saved Courses <span>{savedCourses.length}</span>
+                        Saved Courses <span>{savedCourses.length||0}</span>
                     </button>
                     <button 
                         className={`tab-toggle-btn ${activeTab === "completed" ? "active" : ""}`}
                         onClick={() => setActiveTab("completed")}
                     >
-                        Completed <span>{completedCourses.length}</span>
+                        Completed <span>{completedCourses.length||0}</span>
                     </button>
                 </div>
             </div>
