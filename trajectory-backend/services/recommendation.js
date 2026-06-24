@@ -1,195 +1,82 @@
 import Course from "../models/Course.js";
 import Profile from "../models/Profile.js";
 
+//UPdated Entire recommendation with new learning style also 
+
 const normalizeArray = (arr) => arr.map((item) => item.toLowerCase());
+
 const getUniqueMatchedSkills = (courseSkills, userSkills) =>
   [...new Set(courseSkills)].filter((skill) => userSkills.includes(skill));
 
-export const getRecommendedCourses = async (userId) => {
+const scoreACourse = (course, profile) => {
+  let score = 0;
 
+  const userSkills = normalizeArray(profile.skills.map((s) => s.name));
+  const courseSkills = normalizeArray(course.skills);
+  const matchedSkills = getUniqueMatchedSkills(courseSkills, userSkills);
 
-  const profile = await Profile.findOne({
-    userId,
+  score += matchedSkills.length * 40;
+
+  matchedSkills.forEach((skill) => {
+    const userSkill = profile.skills.find((s) => s.name.toLowerCase() === skill);
+    if (userSkill?.level === course.level) score += 15;
   });
 
-  if (!profile) {
-    throw new Error("Profile not found");
+  const userInterests = normalizeArray(profile.interests);
+  if (userInterests.includes(course.category.toLowerCase())) score += 25;
+
+  const careerPaths = normalizeArray(course.careerPaths);
+  if (careerPaths.includes(profile.careerGoal.toLowerCase())) score += 20;
+
+  if (
+    profile.preferredLearningStyle === "mixed" ||
+    course.type === profile.preferredLearningStyle
+  ) score += 10;
+  if (course.level === profile.preferredDifficultyLevel) score += 15;
+
+  const courseHours = parseInt(course.duration);
+  if (!isNaN(courseHours) && courseHours <= profile.weeklyLearningHours) {
+    score += 10;
   }
 
-
-  const courses = await Course.find();
-
-  const recommendedCourses = [];
-
-  for (const course of courses) {
-    let score = 0;
-    //we need to check this in user profile completed courses
-    
-    const alreadyEnrolled =
-      profile.enrolledCourses.some(
-        (enrolledCourse) =>
-          enrolledCourse.courseId.toString() ===
-          course._id.toString()
-      );
-
-    if (alreadyEnrolled) {
-      continue;
-    }
-    const userSkills = normalizeArray(
-      profile.skills.map((skill) => skill.name)
-    );
-
-    const courseSkills = normalizeArray(course.skills);
-
-    const matchedSkills = getUniqueMatchedSkills(
-      courseSkills,
-      userSkills
-    );
-
-    score += matchedSkills.length * 40;
-
-    const userInterests = profile.interests.map(
-      (interest) => interest.toLowerCase()
-    );
-
-    if (
-      userInterests.includes(
-        course.category.toLowerCase()
-      )
-    ) {
-      score += 25;
-    }
-
-
-    const careerPaths = course.careerPaths.map(
-      (path) => path.toLowerCase()
-    );
-
-    if (
-      careerPaths.includes(
-        profile.careerGoal.toLowerCase()
-      )
-    ) {
-      score += 20;
-    }
-
-
-    if (
-      course.type ===
-      profile.preferredLearningStyle
-    ) {
-      score += 10;
-    }
-
-    if (
-      course.difficulty ===
-      profile.preferredDifficultyLevel
-    ) {
-      score += 5;
-    }
-    recommendedCourses.push({
-      ...course.toObject(),
-      recommendationScore: score,
-    });
-  }
-  recommendedCourses.sort(
-    (a, b) =>
-      b.recommendationScore -
-      a.recommendationScore
-  );
-
-
-  return recommendedCourses.slice(0, 20);
+  return score;
 };
 
-export const getStageRecommendedCourses = async (
-  userId,
-  stageSkills
-) => {
+export const getRecommendedCourses = async (userId) => {
+  const profile = await Profile.findOne({ userId });
+  if (!profile) throw new Error("Profile not found");
 
-  const profile = await Profile.findOne({
-    userId,
-  });
-
-  if (!profile) {
-    throw new Error("Profile not found");
-  }
-  const courses = await Course.find({
-    skills: {
-      $in: stageSkills,
-    },
-  });
-
-  const recommendedCourses = [];
+  const courses = await Course.find();
+  const result = [];
 
   for (const course of courses) {
-
-    let score = 0;
-
-
-    const userSkills = normalizeArray(
-      profile.skills.map((skill) => skill.name)
+    const alreadyEnrolled = profile.enrolledCourses.some(
+      (e) => e.courseId.toString() === course._id.toString()
     );
+    if (alreadyEnrolled) continue;
 
-    const courseSkills = normalizeArray(course.skills);
-
-    const matchedSkills = getUniqueMatchedSkills(
-      courseSkills,
-      userSkills
-    );
-
-    score += matchedSkills.length * 40;
-
-    const userInterests = profile.interests.map(
-      (interest) => interest.toLowerCase()
-    );
-
-    if (
-      userInterests.includes(
-        course.category.toLowerCase()
-      )
-    ) {
-      score += 25;
-    }
-
-    const careerPaths = course.careerPaths.map(
-      (path) => path.toLowerCase()
-    );
-
-    if (
-      careerPaths.includes(
-        profile.careerGoal.toLowerCase()
-      )
-    ) {
-      score += 20;
-    }
-
-
-    if (
-      course.type ===
-      profile.preferredLearningStyle
-    ) {
-      score += 10;
-    }
-
-    if (
-      course.difficulty ===
-      profile.preferredDifficultyLevel
-    ) {
-      score += 5;
-    }
-
-    recommendedCourses.push({
+    result.push({
       ...course.toObject(),
-      recommendationScore: score,
+      recommendationScore: scoreACourse(course, profile),
     });
   }
 
-  recommendedCourses.sort(
-    (a, b) =>
-      b.recommendationScore -
-      a.recommendationScore
-  );
+  return result
+    .sort((a, b) => b.recommendationScore - a.recommendationScore)
+    .slice(0, 20);
+};
 
-  return recommendedCourses.slice(0, 3);
+export const getStageRecommendedCourses = async (userId, stageSkills) => {
+  const profile = await Profile.findOne({ userId });
+  if (!profile) throw new Error("Profile not found");
+
+  const courses = await Course.find({ skills: { $in: stageSkills } });
+
+  return courses
+    .map((course) => ({
+      ...course.toObject(),
+      recommendationScore: scoreACourse(course, profile),
+    }))
+    .sort((a, b) => b.recommendationScore - a.recommendationScore)
+    .slice(0, 3);
 };

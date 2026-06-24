@@ -18,8 +18,7 @@ const dashboardController = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error("DASHBOARD ERROR:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false ,message:"Internal Server Crash"});
   }
 };
 
@@ -33,7 +32,6 @@ const getProfile = async (req, res) => {
       profile: profile || null,
     });
   } catch (error) {
-    console.error("PROFILE ERROR:", error.message);
     res.status(500).json({ success: false });
   }
 };
