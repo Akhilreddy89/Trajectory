@@ -80,7 +80,6 @@ const saveCourse = async (req, res) => {
       });
     }
 
-    // Check if already saved
 
     const alreadyExists =
       profile.enrolledCourses.find(
@@ -95,7 +94,6 @@ const saveCourse = async (req, res) => {
       });
     }
 
-    // Save course
 
     profile.enrolledCourses.push({
       courseId,

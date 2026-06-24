@@ -1,5 +1,5 @@
 import Profile from "../models/Profile.js";
-
+import User from "../models/User.js";
 const getProfile = async (req, res) => {
   try {
     const profile = await Profile.findOne({ userId: req.user });
@@ -12,5 +12,6 @@ const getProfile = async (req, res) => {
     res.status(500).json({ success: false });
   }
 };
+
 
 export { getProfile};

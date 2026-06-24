@@ -1,211 +1,203 @@
-import React, { useEffect, useState } from "react";
-import { getProfile, updateProfile } from "../../services/profileService";
-import "../style/Settings.css";
+import React, { useState, useEffect } from "react";
+import { getProfile, updateProfile} from "../../services/profileService.js";
+import { getCurrentUser } from "../../services/authServices.js";
+import "../style/settings.css";
 
 function Settings() {
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-
-  const [formData, setFormData] = useState({
+  const [status, setStatus] = useState({ type: "", message: "" });
+  const [settings, setSettings] = useState({
     fullName: "",
-    college: "",
-    branch: "",
-    year: "",
-    careerGoal: "",
-    skills: [],
-    interests: [],
+    email: "", // Read-only account anchor
     preferredLearningStyle: "video",
     preferredDifficultyLevel: "beginner",
     weeklyLearningHours: 5,
   });
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchSettingsData = async () => {
       try {
-        const profile = await getProfile();
-
-        setFormData({
-          fullName: profile.fullName || "",
-          college: profile.college || "",
-          branch: profile.branch || "",
-          year: profile.year || "",
-          careerGoal: profile.careerGoal || "",
-          skills: profile.skills || [],
-          interests: profile.interests || [],
-          preferredLearningStyle:
-            profile.preferredLearningStyle || "video",
-          preferredDifficultyLevel:
-            profile.preferredDifficultyLevel || "beginner",
-          weeklyLearningHours:
-            profile.weeklyLearningHours || 5,
-        });
+        const res = await getProfile();
+        const res2=await getCurrentUser();
+        if (res) {
+          setSettings({
+            fullName: res.fullName || "",
+            email: res2.data.user.email || "user@trajectory.edu", // Fallback text context
+            preferredLearningStyle: res.preferredLearningStyle || "video",
+            preferredDifficultyLevel: res.preferredDifficultyLevel || "beginner",
+            weeklyLearningHours: res.weeklyLearningHours || 5,
+          });
+        }
+        setLoading(false);
       } catch (err) {
-        console.error("Failed to load settings:", err);
-      } finally {
+        console.error("Error loading account parameters:", err);
         setLoading(false);
       }
     };
 
-    fetchProfile();
+    fetchSettingsData();
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name === "weeklyLearningHours"
-          ? Number(value)
-          : value,
-    }));
+    setSettings({
+      ...settings,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleArrayChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
-    }));
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+    setStatus({ type: "", message: "" });
 
     try {
-      setSaving(true);
-
-      await updateProfile(formData);
-
-      alert("Settings updated successfully!");
+      if (!settings.fullName.trim()) {
+        setStatus({ type: "error", message: "Identity parameter name field cannot be empty." });
+        return;
+      }
+      
+      await updateProfile(settings);
+      setStatus({ type: "success", message: "Account parameters compiled and synchronized successfully." });
     } catch (err) {
-      console.error("Failed to save settings:", err);
-      alert("Unable to save settings.");
-    } finally {
-      setSaving(false);
+      console.error(err);
+      setStatus({ type: "error", message: err.message || "Failed to commit changes to database layer." });
     }
   };
 
   if (loading) {
-    return <div className="settings-loading">Loading settings...</div>;
+    return (
+      <div className="dashboard-workspace-settings">
+        <div className="settings-dashboard-container">
+          <div className="loading-state">
+            <div className="spinner"></div>
+            <h2>Fetching terminal configuration parameters...</h2>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="settings-container">
-      <div className="settings-header">
-        <h1>Settings</h1>
-        <p>Manage your profile and learning preferences.</p>
+    <div className="dashboard-workspace-settings">
+      <div className="settings-dashboard-container">
+        
+        {/* Workspace Layout Settings Header */}
+        <div className="workspace-settings-header">
+          <div className="settings-title-block">
+            <h1>Account Settings</h1>
+            <p>Manage your algorithmic tracking parameters and platform identity values.</p>
+          </div>
+        </div>
+
+        {status.message && (
+          <div className={`status-message-banner ${status.type}`}>
+            {status.type === "success" ? "✓" : "⚠️"} {status.message}
+          </div>
+        )}
+
+        <form onSubmit={handleSave} className="settings-form-layout">
+          
+          {/* Section 1: Profile Matrix Identity */}
+          <div className="settings-card-group">
+            <div className="settings-card-meta">
+              <h3>Identity Parameters</h3>
+              <p>Core system credentials and display signatures across workspace dashboards.</p>
+            </div>
+            
+            <div className="settings-card-fields">
+              <div className="form-field">
+                <label>Account Identity Link (Immutable)</label>
+                <input
+                  type="email"
+                  value={settings.email}
+                  disabled
+                  className="disabled-input-field"
+                  title="System authentication root values cannot be altered natively."
+                />
+              </div>
+
+              <div className="form-field">
+                <label>Full Name Master Value *</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={settings.fullName}
+                  onChange={handleChange}
+                  placeholder="Enter profile legal identity"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: Engine Compilation Specs */}
+          <div className="settings-card-group">
+            <div className="settings-card-meta">
+              <h3>Engine Tuning Specs</h3>
+              <p>Pacing parameters utilized by the pipeline engine to query custom courses.</p>
+            </div>
+            
+            <div className="settings-card-fields">
+              <div className="form-grid-2col">
+                <div className="form-field">
+                  <label>Resource Delivery Format</label>
+                  <div className="select-wrapper">
+                    <select 
+                      name="preferredLearningStyle" 
+                      value={settings.preferredLearningStyle} 
+                      onChange={handleChange}
+                    >
+                      <option value="video">Video Resources</option>
+                      <option value="theory">Documentation & Theory</option>
+                      <option value="project">Project Archetypes</option>
+                      <option value="mixed">Mixed Strategy</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <label>Target Complexity Baseline</label>
+                  <div className="select-wrapper">
+                    <select 
+                      name="preferredDifficultyLevel" 
+                      value={settings.preferredDifficultyLevel} 
+                      onChange={handleChange}
+                    >
+                      <option value="beginner">Beginner Baseline</option>
+                      <option value="intermediate">Intermediate Scope</option>
+                      <option value="advanced">Advanced Intensity</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label>Weekly Commitment Allocation (Hours)</label>
+                <input
+                  type="number"
+                  name="weeklyLearningHours"
+                  value={settings.weeklyLearningHours}
+                  onChange={handleChange}
+                  min="1"
+                  max="168"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Save Row Action Controls */}
+          <div className="settings-action-footer">
+            <button type="submit" className="btn-save-settings">
+              Save Configuration Changes
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+            </button>
+          </div>
+
+        </form>
+
       </div>
-
-      <form onSubmit={handleSubmit} className="settings-form">
-        <section className="settings-section">
-          <h2>Profile Information</h2>
-
-          <input
-            type="text"
-            name="fullName"
-            placeholder="Full Name"
-            value={formData.fullName}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="college"
-            placeholder="College"
-            value={formData.college}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="branch"
-            placeholder="Branch"
-            value={formData.branch}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="year"
-            placeholder="Year"
-            value={formData.year}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="careerGoal"
-            placeholder="Career Goal"
-            value={formData.careerGoal}
-            onChange={handleChange}
-          />
-        </section>
-
-        <section className="settings-section">
-          <h2>Learning Preferences</h2>
-
-          <label>Skills (comma separated)</label>
-          <input
-            type="text"
-            name="skills"
-            value={formData.skills.join(", ")}
-            onChange={handleArrayChange}
-          />
-
-          <label>Interests (comma separated)</label>
-          <input
-            type="text"
-            name="interests"
-            value={formData.interests.join(", ")}
-            onChange={handleArrayChange}
-          />
-
-          <label>Learning Style</label>
-          <select
-            name="preferredLearningStyle"
-            value={formData.preferredLearningStyle}
-            onChange={handleChange}
-          >
-            <option value="video">Video</option>
-            <option value="reading">Reading</option>
-            <option value="hands-on">Hands-on</option>
-          </select>
-
-          <label>Difficulty Level</label>
-          <select
-            name="preferredDifficultyLevel"
-            value={formData.preferredDifficultyLevel}
-            onChange={handleChange}
-          >
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-
-          <label>Weekly Learning Hours</label>
-          <input
-            type="number"
-            min="1"
-            max="40"
-            name="weeklyLearningHours"
-            value={formData.weeklyLearningHours}
-            onChange={handleChange}
-          />
-        </section>
-
-        <button
-          type="submit"
-          className="save-btn"
-          disabled={saving}
-        >
-          {saving ? "Saving..." : "Save Changes"}
-        </button>
-      </form>
     </div>
   );
 }

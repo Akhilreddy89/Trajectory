@@ -29,5 +29,14 @@ export const getProfile = async () => {
     throw error;
   }
 };
+export const checkProfiles=async()=>{
+  try{
+    const res= await api.get("/profile/me");
+    return res;
 
-
+  }
+  catch(error){
+    console.error("Error fetching profile:", error);
+  }
+}
+ 

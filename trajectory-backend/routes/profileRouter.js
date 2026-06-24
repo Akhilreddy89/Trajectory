@@ -1,7 +1,7 @@
 import { Router } from "express";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import {
-  getProfile
+  getProfile 
 } from "../controllers/profileController.js";
 
 const profileRouter = Router();

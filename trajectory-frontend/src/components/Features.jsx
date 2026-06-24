@@ -1,7 +1,6 @@
 import React from 'react';
 import '../style/Home.css';
 
-/* ── How It Works data ──────────────────────────── */
 const STEPS = [
   {
     num: '1',

@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --ink-dark: #0f172a;
+  --ink-medium: #334155;
+  --ink-muted: #64748b;
+  --indigo-core: #4f46e5;
+  --border-clean: #e2e8f0;
+  --surface-tint: #f8fafc;
+  --success-green: #10b981;
+  --error-red: #ef4444;
+  
+  --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --smooth: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-workspace-settings {
+  font-family: var(--font-sans);
+  width: 100%;
+  box-sizing: border-box;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fills active layout workspace dimensions without clamping bounds */
+.settings-dashboard-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--border-clean);
+  padding: 40px;
+}
+
+/* Layout Page Header Group Components */
+.workspace-settings-header {
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--border-clean);
+  padding-bottom: 24px;
+}
+
+.settings-title-block h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--ink-dark);
+  letter-spacing: -0.03em;
+  margin: 0 0 8px 0;
+}
+
+.settings-title-block p {
+  font-size: 1rem;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+/* Row-Based Block Section Layout Groups */
+.settings-form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.settings-card-group {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border-clean);
+}
+
+.settings-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-card-meta h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink-dark);
+  letter-spacing: -0.01em;
+}
+
+.settings-card-meta p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.settings-card-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Form Input Field Element Primitives */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-field label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.form-field input,
+.form-field select {
+  box-sizing: border-box;
+  width: 100%;
+  height: 48px;
+  border: 1px solid var(--border-clean);
+  border-radius: 8px;
+  padding: 0 16px;
+  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  color: var(--ink-dark);
+  background: #ffffff;
+  transition: all var(--smooth);
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: var(--ink-dark);
+}
+
+/* Read-Only Configuration States override */
+.disabled-input-field {
+  background-color: var(--surface-tint) !important;
+  color: var(--ink-muted) !important;
+  border-style: dashed !important;
+  cursor: not-allowed;
+}
+
+/* Dropdown Arrow Selection Wrappers */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-wrapper select {
+  appearance: none;
+  padding-right: 40px;
+}
+
+.select-wrapper::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 5px;
+  background-color: var(--ink-dark);
+  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+  pointer-events: none;
+}
+
+/* Control Execution Buttons Row */
+.settings-action-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.btn-save-settings {
+  box-sizing: border-box;
+  border: none;
+  border-radius: 8px;
+  height: 48px;
+  padding: 0 28px;
+  background: var(--ink-dark);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: opacity var(--smooth);
+}
+
+.btn-save-settings:hover {
+  opacity: 0.9;
+}
+
+/* System Response Status Update Banners */
+.status-message-banner {
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-message-banner.success {
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #065f46;
+}
+
+.status-message-banner.error {
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #991b1b;
+}
+
+/* Loading Framework Items Matrix */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  gap: 16px;
+}
+
+.loading-state h2 {
+  font-size: 1rem;
+  color: var(--ink-muted);
+  font-weight: 500;
+  margin: 0;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border-clean);
+  border-top-color: var(--ink-dark);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Global Media Query Constraints Layer */
+@media (max-width: 860px) {
+  .settings-card-group {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .settings-dashboard-container {
+    padding: 24px;
+  }
+  .form-grid-2col {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

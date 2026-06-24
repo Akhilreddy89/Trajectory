@@ -24,3 +24,6 @@ export const currentStage = (roadmap) => {
     const current = roadmap.stages.find(stage => stage.status === "pending");
     return current || null;
 }
+export const undoStage = async (orderId) => {
+  return await api.patch("/roadmap/stage/undo", { order: orderId });
+};

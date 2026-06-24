@@ -1,12 +1,10 @@
-// src/context/AuthContext.jsx
-
 import {
   createContext,
   useContext,
   useState,
   useEffect,
 } from "react";
-
+import { getCurrentUser } from "../../services/authServices"; 
 const AuthContext = createContext();
 
 export const AuthProvider = ({
@@ -28,7 +26,6 @@ export const AuthProvider = ({
 
     const fetchUser = async () => {
 
-      // No token found
       if (!token) {
         setUser(null);
         setLoading(false);
@@ -37,17 +34,9 @@ export const AuthProvider = ({
 
       try {
 
-        const res = await fetch(
-          "http://localhost:5000/api/me",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        // Invalid token
-        if (!res.ok) {
+        const res = await getCurrentUser();
+        console.log(res);
+        if (res.status==500) {
 
           localStorage.removeItem(
             "token"
@@ -59,13 +48,7 @@ export const AuthProvider = ({
           return;
         }
 
-        const data = await res.json();
-
-        // Adjust according to your API response
-        // Example:
-        // { user: {...} }
-
-        setUser(data.user);
+        setUser(res.data.user);
 
       } catch (err) {
 
@@ -92,7 +75,6 @@ export const AuthProvider = ({
 
   }, [token]);
 
-  // Login
 
   const login = (
     newToken,
@@ -110,8 +92,6 @@ export const AuthProvider = ({
       setUser(newUser);
     }
   };
-
-  // Logout
 
   const logout = () => {
 

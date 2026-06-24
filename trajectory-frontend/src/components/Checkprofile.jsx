@@ -1,20 +1,11 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { checkProfiles } from "../../services/profileService";
 const checkProfile = async () => {
   const navigate = useNavigate();
   try {
-    const res = await axios.get(
-      "http://localhost:5000/api/profile/me",
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
+    const res = await checkProfiles();
     const profile = res.data.profile;
-
-    // Check if profile exists
     if (!profile) {
       navigate("/profile");
       return;

@@ -27,6 +27,7 @@ import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 import AppLayout from "./pages/AppLayout.jsx";
 import PublicRoute from "./pages/PublicRoute.jsx";
 import Settings from "./pages/Settings.jsx";
+import Progress from "./pages/ProgressPage.jsx";
 
 
 createRoot(document.getElementById("root")).render(
@@ -57,7 +58,7 @@ createRoot(document.getElementById("root")).render(
 
               <Route
                 path="/progress"
-                element={<Dashboard />}
+                element={<Progress />}
               />
 
               <Route

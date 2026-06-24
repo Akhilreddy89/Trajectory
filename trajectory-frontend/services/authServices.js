@@ -38,7 +38,6 @@ export const getRegister = async (form) => {
     const res = await api.post("/register", form);
     return res;
   } catch (error) {
-    // Handle different HTTP status codes
     if (error.response) {
       const status = error.response.status;
       const data = error.response.data;
@@ -59,3 +58,15 @@ export const getRegister = async (form) => {
     }
   }
 };
+
+export const getCurrentUser=async()=>{
+  try{
+    const res=await api.get("/me");
+    return res;
+  }
+  catch(error){
+    console.log("error",error);
+  }
+}
+
+

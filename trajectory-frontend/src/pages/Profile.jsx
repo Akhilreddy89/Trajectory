@@ -243,11 +243,11 @@ function Profile() {
                 <input
                   type="number"
                   name="year"
-                  placeholder="Year (1-5)"
+                  placeholder="Year (1-4)"
                   value={profile.year}
                   onChange={handleChange}
                   min="1"
-                  max="5"
+                  max="4"
                 />
                 {errors.year && <p className="field-error">{errors.year}</p>}
               </div>

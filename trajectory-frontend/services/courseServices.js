@@ -45,3 +45,11 @@ export const getCompletedCourses = async () => {
         throw error;
     }
 };
+export const savedCourse = async (courseId) => {
+  try {
+    const res = await api.post(`/save-course/${courseId}`, { courseId });
+    return res.data; 
+  } catch (error) {
+    console.error("Error saving a course:", error);
+  }
+};

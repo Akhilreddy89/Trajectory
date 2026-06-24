@@ -1,29 +1,20 @@
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { savedCourse } from '../../services/courseServices';
 import '../style/CourseCard.css';
-import axios from 'axios';
-  import { useNavigate, useLocation } from 'react-router-dom';
 
 function CourseCard({ course }) {
   const navigate = useNavigate();
-
-
   const location = useLocation();
   const isBookmarksPage = location.pathname.includes('bookmarks');
 
   const saveCourse = async (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); 
     try {
-      await axios.post(
-        `http://localhost:5000/api/save-course/${course._id}`,
-        { courseId: course._id },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await savedCourse(course._id);
       alert("Course saved successfully!");
     } catch (err) {
-      console.error(err);
+      console.error("Component catch received:", err);
       alert("Failed to save course");
     }
   };
@@ -32,44 +23,41 @@ function CourseCard({ course }) {
     e.stopPropagation();
   };
 
-
-return (
-     <div className="course-card" onClick={() => navigate(`/course/${course._id}`)}>
-      {/* Conditionally hide default button if on bookmarks page */}
+  return (
+    <div className="course-card" onClick={() => navigate(`/course/${course._id}`)}>
       {!isBookmarksPage && (
         <button className="course-bookmark" onClick={saveCourse} title="Save course">
           🔖
         </button>
       )}
 
-    {/* Everything that sits above the button goes here */}
-    <div className="course-content">
-      <span className="course-category">{course.category}</span>
-      <h4 className="course-title">{course.title}</h4>
-      <p className="course-source">{course.source}</p>
+      <div className="course-content">
+        <span className="course-category">{course.category}</span>
+        <h4 className="course-title">{course.title}</h4>
+        <p className="course-source">{course.source}</p>
 
-      <div className="course-skills">
-        {(course.skills || []).slice(0, 4).map((skill, i) => (
-          <span key={i} className="skill-tag">
-            {skill}
-          </span>
-        ))}
+        <div className="course-skills">
+          {(course.skills || []).slice(0, 3).map((skill, i) => (
+            <span key={i} className="skill-tag">
+              {skill}
+            </span>
+          ))}
+        </div>
       </div>
-    </div>
 
-    {/* The button stays at the bottom level */}
-    {course.url && (
-      <a
-        href={course.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={goToCourse}
-      >
-        Start Learning →
-      </a>
-    )}
-  </div>
-);
+      {course.url && (
+        <a 
+          className="course-link"
+          href={course.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={goToCourse}
+        >
+          Start Learning →
+        </a>
+      )}
+    </div>
+  );
 }
 
 export default CourseCard;
