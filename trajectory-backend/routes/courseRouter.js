@@ -11,7 +11,7 @@ import {
 } from "../controllers/courseController.js";
 
 const courseRouter = Router();
-courseRouter.get('/course/:courseId', getCourseById);
+courseRouter.get('/course/:courseId',authMiddleware, getCourseById);
 courseRouter.post('/save-course/:courseId', authMiddleware, saveCourse);
 courseRouter.get('/saved-courses', authMiddleware, getSavedCourses);
 courseRouter.delete('/delete-saved-course/:courseId', authMiddleware,deleteCourse);

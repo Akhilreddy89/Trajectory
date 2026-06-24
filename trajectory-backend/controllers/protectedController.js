@@ -37,7 +37,6 @@ const getProfile = async (req, res) => {
     res.status(500).json({ success: false });
   }
 };
-
 const saveProfile = async (req, res) => {
   try {
     const profile = await Profile.findOneAndUpdate(
@@ -47,8 +46,9 @@ const saveProfile = async (req, res) => {
         userId: req.user
       },
       {
-        returnDocument: "after", 
-        upsert: true
+        new: true,      
+        upsert: true,   
+        runValidators: true  
       }
     );
 
@@ -57,8 +57,7 @@ const saveProfile = async (req, res) => {
       profile,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, message: "Failed to save profile" }); 
   }
 };
 

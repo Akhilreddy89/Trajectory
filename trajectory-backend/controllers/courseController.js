@@ -286,11 +286,10 @@ const markCompleted = async (req, res) => {
 };
 const getCompletedCourses = async (req, res) => {
   try {
-    // 1. Fetch profile and populate standard course fields needed by CourseCard
     const profile = await Profile.findOne({ userId: req.user }).populate({
       path: "enrolledCourses.courseId",
       model: "Course",
-      select: "title description category source skills url" // Explicitly bring fields needed by CourseCard
+      select: "title description category source skills url" 
     });
 
     // 2. Handle empty profile states cleanly
@@ -338,7 +337,7 @@ const getCompletedCourses = async (req, res) => {
     console.error("GET COMPLETED COURSES CONTROLLER ERROR:", error.message);
     return res.status(500).json({ 
       success: false, 
-      error: "Internal Server Error context trace pinpoint." 
+      message: "Internal Server Error context trace pinpoint." 
     });
   }
 };
