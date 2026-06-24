@@ -45,11 +45,32 @@ export const getCompletedCourses = async () => {
         throw error;
     }
 };
-export const savedCourse = async (courseId) => {
+
+export const getCourseById = async (courseId) => {
   try {
-    const res = await api.post(`/save-course/${courseId}`, { courseId });
-    return res.data; 
+    const res = await api.get(`/course/${courseId}`);
+    return res.data;
   } catch (error) {
-    console.error("Error saving a course:", error);
+    console.error("Error fetching course details:", error);
+    throw error;
   }
 };
+
+export const savedCourse = async (courseId) => {
+  try {
+    const res = await api.post(`/save-course/${courseId}`, {});
+    return res.data;
+  } catch (error) {
+    console.error("Error saving a course:", error);
+    throw error;
+  }
+};
+
+// export const getSavedCourses=async()=>{
+//     try {
+//     const res = await api.get("/saved-courses");
+//     return res; 
+//   } catch (error) {
+//     console.error("Error saving a course:", error);
+//   }
+// }

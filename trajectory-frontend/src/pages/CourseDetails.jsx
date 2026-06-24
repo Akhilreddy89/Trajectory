@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { getCourseById, getSavedCourses, savedCourse } from '../../services/courseServices.js';
 import "../style/CourseDetails.css";
 
 function CourseDetails() {
@@ -15,27 +15,20 @@ function CourseDetails() {
     const fetchCourseDetailsAndStatus = async () => {
       try {
         setLoading(true);
-        
-        // Fetch course core payload data
-        const res = await axios.get(`http://localhost:5000/api/course/${courseId}`);
-        setCourse(res.data.course);
 
-        // Optional cross-check against saved bookmark states if authenticated
-        const token = localStorage.getItem("token");
-        if (token) {
-          try {
-            const savedRes = await axios.get("http://localhost:5000/api/saved-courses", {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            // Inspect array elements matchers
-            const alreadyBookmarked = savedRes.data.savedCourses?.some(
-              (item) => item.courseId?._id === courseId || item.courseId === courseId
-            );
-            if (alreadyBookmarked) setIsSaved(true);
-          } catch (statusErr) {
-            console.log("Non-critical bookmark state sync pass:", statusErr.message);
-          }
+        const data = await getCourseById(courseId);
+        setCourse(data.course);
+
+        try {
+          const savedRes = await getSavedCourses();
+          const alreadyBookmarked = savedRes.data.savedCourses?.some(
+            (item) => item.courseId?._id === courseId || item.courseId === courseId
+          );
+          if (alreadyBookmarked) setIsSaved(true);
+        } catch (statusErr) {
+          console.log("Non-critical bookmark state sync pass:", statusErr.message);
         }
+
       } catch (err) {
         console.error("Error fetching course:", err);
         setError("Failed to load course details. Please return later.");
@@ -48,29 +41,19 @@ function CourseDetails() {
   }, [courseId]);
 
   const handleSaveCourse = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please login to save courses");
-        navigate("/login");
-        return;
-      }
-
-      await axios.post(
-        `http://localhost:5000/api/save-course/${courseId}`,
-        { courseId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
+      await savedCourse(courseId);
       setIsSaved(true);
-      alert("Course saved successfully!");
     } catch (err) {
       console.error("Error saving course:", err);
       if (err.response?.status === 400) {
-        alert("Course already saved");
         setIsSaved(true);
-      } else {
-        alert("Failed to save course");
       }
     }
   };
