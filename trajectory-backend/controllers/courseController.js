@@ -342,5 +342,107 @@ const getCompletedCourses = async (req, res) => {
   }
 };
 
+const contextSearchCourses = async (req, res) => {
+  try {
+    const { q, level, type } = req.query;
 
-export { recommendedCourses, homecourses, saveCourse ,getSavedCourses, deleteCourse, markCompleted, getCourseById, getCompletedCourses};
+    if (!q || q.trim() === "") {
+      return res.status(400).json({ success: false, message: "Search query is required" });
+    }
+
+    const profile = await Profile.findOne({ userId: req.user });
+    if (!profile) {
+      return res.status(404).json({ success: false, message: "Profile not found" });
+    }
+
+    const searchFilter = {
+      $text: { $search: q.trim() },
+      _id: { $nin: profile.enrolledCourses.map((e) => e.courseId) },
+    };
+
+    if (level) searchFilter.level = level;
+    if (type) searchFilter.type = type;
+
+    const courses = await Course.find(
+      searchFilter,
+      { score: { $meta: "textScore" } } 
+    );
+
+    const userSkills = profile.skills.map((s) => s.name.toLowerCase());
+    const userInterests = profile.interests.map((i) => i.toLowerCase());
+    const userCareerGoal = profile.careerGoal?.toLowerCase() || "";
+
+    const ranked = courses.map((course) => {
+      const textScore = course.toObject().score || 0;
+      let contextScore = 0;
+
+      const matchedSkills = course.skills.filter((s) =>
+        userSkills.includes(s.toLowerCase())
+      );
+      contextScore += matchedSkills.length * 20;
+
+      matchedSkills.forEach((skill) => {
+        const userSkill = profile.skills.find(
+          (s) => s.name.toLowerCase() === skill.toLowerCase()
+        );
+        if (userSkill?.level === course.level) contextScore += 15;
+      });
+
+      if (course.careerPaths.map((p) => p.toLowerCase()).includes(userCareerGoal)) {
+        contextScore += 30;
+      }
+
+      if (userInterests.includes(course.category?.toLowerCase())) {
+        contextScore += 20;
+      }
+
+      if (course.level === profile.preferredDifficultyLevel) contextScore += 15;
+
+      if (
+        profile.preferredLearningStyle === "mixed" ||
+        course.type === profile.preferredLearningStyle
+      ) contextScore += 10;
+
+      return {
+        ...course.toObject(),
+        textScore: parseFloat(textScore.toFixed(2)),
+        contextScore,
+        finalScore: textScore * 10 + contextScore, 
+      };
+    });
+
+    const results = ranked
+      .sort((a, b) => b.finalScore - a.finalScore)
+      .slice(0, 20);
+
+    if (results.length === 0) {
+      const fallback = await Course.find({
+        $or: [
+          { title: { $regex: q, $options: "i" } },
+          { skills: { $regex: q, $options: "i" } },
+          { category: { $regex: q, $options: "i" } },
+        ],
+        _id: { $nin: profile.enrolledCourses.map((e) => e.courseId) },
+      }).limit(10);
+
+      return res.json({
+        success: true,
+        count: fallback.length,
+        courses: fallback,
+        fallback: true,
+      });
+    }
+
+    return res.json({
+      success: true,
+      count: results.length,
+      courses: results,
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+
+
+export { recommendedCourses, homecourses, saveCourse ,getSavedCourses, deleteCourse, markCompleted, getCourseById, getCompletedCourses,contextSearchCourses};

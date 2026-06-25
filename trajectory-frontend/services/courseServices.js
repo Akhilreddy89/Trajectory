@@ -64,3 +64,13 @@ export const savedCourse = async (courseId) => {
     throw error;
   }
 };
+export const searchCourses = async (query, filters = {}) => {
+  try {
+    const params = new URLSearchParams({ q: query, ...filters });
+    const res = await api.get(`/search?${params}`);
+    return res.data;
+  } catch (error) {
+    console.error("Search error:", error);
+    throw error;
+  }
+};

@@ -83,6 +83,7 @@ const courseSchema = new mongoose.Schema(
 courseSchema.index({ skills: 1 });
 courseSchema.index({ category: 1 });
 courseSchema.index({ careerPaths: 1 });
+courseSchema.index({ title: "text", description: "text", skills: "text", category: "text" });
 const Course = mongoose.model("Course", courseSchema);
 
 export default Course;

@@ -7,7 +7,8 @@ import {
   deleteCourse,
   markCompleted,
   getCourseById,
-  getCompletedCourses
+  getCompletedCourses,
+  contextSearchCourses
 } from "../controllers/courseController.js";
 
 const courseRouter = Router();
@@ -18,4 +19,6 @@ courseRouter.delete('/delete-saved-course/:courseId', authMiddleware,deleteCours
 courseRouter.post('/mark-completed/:courseId', authMiddleware,markCompleted);
 courseRouter.get('/home/courses', authMiddleware, homecourses);
 courseRouter.get('/completed-courses', authMiddleware, getCompletedCourses);
+courseRouter.get("/search", authMiddleware, contextSearchCourses);
+
 export default courseRouter;
