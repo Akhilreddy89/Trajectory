@@ -5,8 +5,7 @@ import "../style/Navbar_internal.css";
 
 function Navbar() {
   const location = useLocation();
-
-  // Helper function to map pathnames to clean dashboard page titles
+  const { loading, isAuthenticated } = useAuth();
   const getPageTitle = () => {
     const path = location.pathname.toLowerCase();
     
@@ -31,7 +30,6 @@ function Navbar() {
 
       <div className="navbar-right">
         {(() => {
-          const { loading, isAuthenticated } = useAuth();
 
           if (loading || !isAuthenticated) return null;
 

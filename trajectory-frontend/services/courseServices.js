@@ -1,4 +1,3 @@
-import axios from "axios";
 import api from "./api";
 export const getCourses = async () => {
     try{
@@ -65,12 +64,3 @@ export const savedCourse = async (courseId) => {
     throw error;
   }
 };
-
-// export const getSavedCourses=async()=>{
-//     try {
-//     const res = await api.get("/saved-courses");
-//     return res; 
-//   } catch (error) {
-//     console.error("Error saving a course:", error);
-//   }
-// }

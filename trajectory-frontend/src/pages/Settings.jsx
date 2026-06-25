@@ -1,48 +1,46 @@
 import React, { useState, useEffect } from "react";
-import { getProfile, updateProfile} from "../../services/profileService.js";
-import { getCurrentUser } from "../../services/authServices.js";
+import { getProfile, updateProfile } from "../../services/profileService.js";
+import { useAuth } from "../context/AuthContext.jsx";
 import "../style/settings.css";
 
 function Settings() {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState({ type: "", message: "" });
   const [settings, setSettings] = useState({
     fullName: "",
-    email: "", // Read-only account anchor
+    email: "",
     preferredLearningStyle: "video",
     preferredDifficultyLevel: "beginner",
     weeklyLearningHours: 5,
   });
 
+
   useEffect(() => {
     const fetchSettingsData = async () => {
       try {
         const res = await getProfile();
-        const res2=await getCurrentUser();
         if (res) {
           setSettings({
             fullName: res.fullName || "",
-            email: res2.data.user.email || "user@trajectory.edu", // Fallback text context
+            email: user?.email || "",
             preferredLearningStyle: res.preferredLearningStyle || "video",
             preferredDifficultyLevel: res.preferredDifficultyLevel || "beginner",
             weeklyLearningHours: res.weeklyLearningHours || 5,
           });
         }
-        setLoading(false);
       } catch (err) {
-        console.error("Error loading account parameters:", err);
+        console.error("Error loading settings:", err);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchSettingsData();
-  }, []);
+  }, [user]);
 
   const handleChange = (e) => {
-    setSettings({
-      ...settings,
-      [e.target.name]: e.target.value,
-    });
+    setSettings({ ...settings, [e.target.name]: e.target.value });
   };
 
   const handleSave = async (e) => {
@@ -51,17 +49,16 @@ function Settings() {
 
     try {
       if (!settings.fullName.trim()) {
-        setStatus({ type: "error", message: "Identity parameter name field cannot be empty." });
+        setStatus({ type: "error", message: "Full name cannot be empty." });
         return;
       }
-      
       await updateProfile(settings);
-      setStatus({ type: "success", message: "Account parameters compiled and synchronized successfully." });
+      setStatus({ type: "success", message: "Settings saved successfully." });
     } catch (err) {
-      console.error(err);
-      setStatus({ type: "error", message: err.message || "Failed to commit changes to database layer." });
+      setStatus({ type: "error", message: err.message || "Failed to save settings." });
     }
   };
+
 
   if (loading) {
     return (
@@ -79,7 +76,7 @@ function Settings() {
   return (
     <div className="dashboard-workspace-settings">
       <div className="settings-dashboard-container">
-        
+
         {/* Workspace Layout Settings Header */}
         <div className="workspace-settings-header">
           <div className="settings-title-block">
@@ -95,14 +92,14 @@ function Settings() {
         )}
 
         <form onSubmit={handleSave} className="settings-form-layout">
-          
+
           {/* Section 1: Profile Matrix Identity */}
           <div className="settings-card-group">
             <div className="settings-card-meta">
               <h3>Identity Parameters</h3>
               <p>Core system credentials and display signatures across workspace dashboards.</p>
             </div>
-            
+
             <div className="settings-card-fields">
               <div className="form-field">
                 <label>Account Identity Link (Immutable)</label>
@@ -134,15 +131,15 @@ function Settings() {
               <h3>Engine Tuning Specs</h3>
               <p>Pacing parameters utilized by the pipeline engine to query custom courses.</p>
             </div>
-            
+
             <div className="settings-card-fields">
               <div className="form-grid-2col">
                 <div className="form-field">
                   <label>Resource Delivery Format</label>
                   <div className="select-wrapper">
-                    <select 
-                      name="preferredLearningStyle" 
-                      value={settings.preferredLearningStyle} 
+                    <select
+                      name="preferredLearningStyle"
+                      value={settings.preferredLearningStyle}
                       onChange={handleChange}
                     >
                       <option value="video">Video Resources</option>
@@ -156,9 +153,9 @@ function Settings() {
                 <div className="form-field">
                   <label>Target Complexity Baseline</label>
                   <div className="select-wrapper">
-                    <select 
-                      name="preferredDifficultyLevel" 
-                      value={settings.preferredDifficultyLevel} 
+                    <select
+                      name="preferredDifficultyLevel"
+                      value={settings.preferredDifficultyLevel}
                       onChange={handleChange}
                     >
                       <option value="beginner">Beginner Baseline</option>

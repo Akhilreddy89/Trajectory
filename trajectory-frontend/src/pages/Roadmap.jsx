@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import CourseCard from "../components/CourseCard.jsx";
 import { completeStage, undoStage, getCompleteRoadmap } from "../../services/roadmapServices.js";
 

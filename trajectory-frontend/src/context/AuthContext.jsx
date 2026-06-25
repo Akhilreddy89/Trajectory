@@ -35,7 +35,6 @@ export const AuthProvider = ({
       try {
 
         const res = await getCurrentUser();
-        console.log(res);
         if (res.status==500) {
 
           localStorage.removeItem(

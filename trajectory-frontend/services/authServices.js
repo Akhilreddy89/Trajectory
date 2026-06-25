@@ -1,12 +1,7 @@
-import axios from "axios";
 import api from "./api";
 export const getLogin = async (form) => {
   try {
     const res = await api.post("/login", form);
-      form,
-      {
-        withCredentials: true,
-      }
     if (res.status === 200) {
       localStorage.setItem("token", res.data.token);
     }
@@ -59,14 +54,16 @@ export const getRegister = async (form) => {
   }
 };
 
-export const getCurrentUser=async()=>{
-  try{
-    const res=await api.get("/me");
+export const getCurrentUser = async () => {
+  try {
+    const res = await api.get("/me");
     return res;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error("Session expired. Please log in again.");
+    }
+    throw new Error("Failed to fetch user. Check your connection.");
   }
-  catch(error){
-    console.log("error",error);
-  }
-}
+};
 
 

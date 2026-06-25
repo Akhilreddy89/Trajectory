@@ -49,14 +49,20 @@ function Login() {
       
       if (data.success) {
         login(data.token, data.user);
-        const profile = await getMyProfile();
-
-        if (!profile || !profile.fullName || profile.skills.length === 0) {
+        try{
+          const profile = await getMyProfile();
+          if (!profile || !profile.fullName || profile.skills.length === 0) {
+            navigate("/profile");
+          } else {
+            navigate("/dashboard");
+          }
+        } 
+        catch(error){
+          console.error("Profile fetch failed after login:", profileErr);
           navigate("/profile");
-        } else {
-          navigate("/dashboard");
         }
-      } else {
+      }
+      else {
         setStatusMessage("Login failed. Please check your credentials.");
       }
     } catch (err) {
