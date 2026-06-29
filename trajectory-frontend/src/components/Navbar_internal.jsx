@@ -16,7 +16,7 @@ function Navbar() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (query.trim().length < 2) return;
+    if (query.trim().length < 1) return;
 
     const timer = setTimeout(() => {
       navigate(`/courses?q=${encodeURIComponent(query.trim())}`);

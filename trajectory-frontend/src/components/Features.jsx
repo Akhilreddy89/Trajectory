@@ -146,7 +146,7 @@ const Features = () => {
         </div>
       </section>
 
-      {/* ── Stats bar ─────────────────────────── */}
+      {/* ── Stats bar ───────────────────────────
       <div className="stats-bar">
         {STATS.map((s) => (
           <div className="stat-item" key={s.label}>
@@ -154,7 +154,7 @@ const Features = () => {
             <div className="lbl">{s.label}</div>
           </div>
         ))}
-      </div>
+      </div> */}
     </>
   );
 };

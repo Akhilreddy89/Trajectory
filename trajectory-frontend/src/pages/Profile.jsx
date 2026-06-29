@@ -347,7 +347,7 @@ function Profile() {
               <div className="item-list">
                 {profile.skills.map((skill, index) => (
                   <div key={index} className="item-tag">
-                    <span>{skill.name} <span className="level">({skill.level})</span></span>
+                    <span>{skill.name}</span>
                     <button type="button" className="item-remove" onClick={() => removeSkill(index)}>
                       ✕
                     </button>
@@ -491,7 +491,7 @@ function Profile() {
                 <h3>Current Stack</h3>
                 <div className="review-badges">
                   {profile.skills.map((skill, i) => (
-                    <span key={i} className="review-pill-tag text-p">{skill.name} <small>({skill.level})</small></span>
+                    <span key={i} className="review-pill-tag text-p">{skill.name} </span>
                   ))}
                 </div>
               </div>

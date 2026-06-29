@@ -1,6 +1,6 @@
 import Course from "../models/Course.js";
 import Profile from "../models/Profile.js";
-
+import mongoose from "mongoose";
 //UPdated Entire recommendation with new learning style also 
 
 const normalizeArray = (arr) => arr.map((item) => item.toLowerCase());
@@ -43,8 +43,11 @@ const scoreACourse = (course, profile) => {
 };
 
 export const getRecommendedCourses = async (userId) => {
-  const profile = await Profile.findOne({ userId });
-  if (!profile) throw new Error("Profile not found");
+  console.log(userId);
+  const profile = await Profile.findOne({
+    userId: new mongoose.Types.ObjectId(userId)
+  });
+  if (!profile) return [];
 
   const courses = await Course.find();
   const result = [];

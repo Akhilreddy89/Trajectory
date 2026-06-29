@@ -2,21 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../style/Home.css';
 
-const AVATARS = [
-  { initials: 'AK', bg: '#6C5CE7' },
-  { initials: 'RS', bg: '#00B894' },
-  { initials: 'MP', bg: '#E17055' },
-  { initials: 'TL', bg: '#FDCB6E', color: '#854F0B' },
-];
-
-const COLLEGES = [
-  'IIT Bombay', 'BITS Pilani', 'VIT Vellore', 'NIT Trichy', 'DTU Delhi', 'VJTI Mumbai',
-];
 
 const Hero = () => {
   return (
     <>
-      {/* ── Hero ─────────────────────────────── */}
       <section className="hero" id="hero">
         {/* Badge */}
         <div className="hero-badge">
@@ -51,7 +40,7 @@ const Hero = () => {
         </div>
 
         {/* Social proof */}
-        <div className="hero-social">
+        {/* <div className="hero-social">
           <div className="avatars">
             {AVATARS.map((av) => (
               <div
@@ -66,18 +55,18 @@ const Hero = () => {
           <span>
             Joined by <strong>12,400+</strong> students this month
           </span>
-        </div>
+        </div> */}
       </section>
 
       {/* ── Trusted by ────────────────────────── */}
-      <div className="trusted">
+      {/* <div className="trusted">
         <p className="trusted-label">Students from these colleges use Trajectory</p>
         <div className="trusted-logos">
           {COLLEGES.map((c) => (
             <span key={c}>{c}</span>
           ))}
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

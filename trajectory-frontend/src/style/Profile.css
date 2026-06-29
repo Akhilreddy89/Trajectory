@@ -10,7 +10,7 @@
   --transition: 0.2s ease;
 }
 
-.profile-page {
+/* .profile-page {
   min-height: 100vh;
   padding: 60px 24px;
   background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.1), transparent 35%),
@@ -18,9 +18,9 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-}
+} */
 
-.profile-container {
+/* .profile-container {
   max-width: 760px;
   width: 100%;
   background: #ffffff;
@@ -28,7 +28,7 @@
   border-radius: var(--radius-xl);
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
   padding: 40px;
-}
+} */
 
 /* Header UI Elements */
 .profile-header {
@@ -95,6 +95,7 @@
   color: var(--ink-2);
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  
 }
 
 .form-field input,
@@ -116,7 +117,6 @@
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
 }
 
-/* Horizontal Flexible Tag Architecture */
 .item-list {
   display: flex;
   flex-wrap: wrap;
