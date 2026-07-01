@@ -1,124 +1,84 @@
-Trajectory – AI-Powered Personalized Learning Platform
- Overview
+Trajectory — Personalized Learning Roadmap Platform
 
-Trajectory is an AI-powered personalized learning platform designed for tech students to discover structured roadmaps, recommended courses, and project-based learning paths based on their skills, interests, and career goals.
+Trajectory is a MERN stack platform that helps tech students figure out what to learn next. Instead of generic course lists, it builds role-based roadmaps (Frontend, Backend, Full Stack, AI Engineer, Data Analyst) and recommends courses and follow-up projects stage by stage, matched to a user's skills, interests, career goals, and learning style.
 
-The platform dynamically generates personalized learning experiences using:
 
-Roadmap generation
-Recommendation engine
-Skill-based course matching
-Career-oriented learning paths
-Progress tracking concepts
-AI-ready architecture
+Status: Actively in development. Core auth, roadmap generation, and the course recommendation engine are functional. Current focus is tightening the link between courses and project follow-ups so each stage feels like a connected learning path rather than a sorted list of links. Not deployed yet — deployment comes after this logic is solid.
 
- Features
-  Authentication System
-  User Registration & Login
-  JWT Authentication
-  Protected Routes
-  Secure User Sessions
-  Personalized User Profiles
 
-Users can configure:
 
-Career Goals
-Skills
+Why this project exists
+
+Most students don't struggle to find courses — they struggle to find the right next step. Trajectory tries to solve:
+
+
+Information overload from too many course options
+Unstructured, non-sequential learning
+Lack of personalized guidance based on actual skill level
+Difficulty knowing what to build after finishing a course
+
+
+Features
+
+Authentication
+
+
+User registration & login
+JWT-based authentication
+Protected routes and secure sessions
+
+
+Personalized Profiles
+
+Users configure:
+
+
+Career goal
+Current skills
 Interests
-Preferred Learning Style
-Preferred Difficulty Level
+Preferred learning style
+Preferred difficulty level
+
+
 Dynamic Roadmap Generation
 
-Trajectory generates role-based roadmaps for:
+Role-based roadmaps for Frontend Developer, Backend Developer, Full Stack Developer, AI Engineer, and Data Analyst. Each roadmap includes learning stages, required skills, suggested projects, and estimated duration.
 
-Frontend Developer
-Backend Developer
-Full Stack Developer
-AI Engineer
-Data Analyst
+Recommendation Engine
 
-Each roadmap contains:
+A custom scoring system that ranks courses per stage based on:
 
-Learning stages
-Required skills
-Projects
-Estimated learning duration
-AI-Based Recommendation Engine
 
-Custom recommendation system that suggests courses based on:
+Skill match
+Career path match
+Interest match
+Learning style match
+Difficulty match
 
-User skills
-Career goals
-Interests
-Learning preferences
-Difficulty preference
-Stage-Wise Course Recommendations
 
-Every roadmap stage dynamically fetches:
+Courses are pulled from Coursera, Udemy, freeCodeCamp, YouTube, and edX, with bookmarking and skill tagging.
 
-2–3 recommended courses
-From multiple learning platforms
+Course → Project Follow-Up (in progress)
 
-Supported platforms include:
-
-Coursera
-Udemy
-freeCodeCamp
-YouTube
-edX
-Course Features
-Save/Bookmark Courses
-Skill Tags
-Platform Information
-Course Categorization
-Personalized Recommendations
-Smart Recommendation Logic
-
-The recommendation engine uses:
-
-Skill matching
-Career path matching
-Interest matching
-Learning style matching
-Difficulty matching
-Score-based ranking system
-Future Enhancements
-AI Chatbot Mentor
-Progress Tracking
-Consistency Heatmap
-Notes System
-Gamification
-Internship Recommendations
-Resume Builder
-AI-generated Notes & Summaries
-
+The current build phase: tying project suggestions to the specific skills a user just gained from a completed course, not just to the broader roadmap stage — so a finished course leads to a concrete, relevant project rather than a generic "next stage" link.
 
 Tech Stack
-  Frontend
-  React.js
-  Tailwind CSS
-  Axios
-  React Router DOM
-  Backend
-  Node.js
-  Express.js
-  JWT Authentication
-  Database
-  MongoDB
-  Mongoose
 
-  
-Project Architecture
+Frontend: React.js, Tailwind CSS, Axios, React Router DOM
+Backend: Node.js, Express.js, JWT Authentication
+Database: MongoDB, Mongoose
+
+Project Structure
+
 Trajectory
-│
-├── Frontend
+├── trajectory-frontend
 │   ├── Authentication
 │   ├── Dashboard
 │   ├── Roadmap Pages
 │   ├── Course Recommendations
 │   └── Notes & Progress UI
 │
-├── Backend
+├── trajectory-backend
 │   ├── Auth APIs
 │   ├── Profile APIs
 │   ├── Roadmap APIs
@@ -130,79 +90,72 @@ Trajectory
     ├── Profiles
     ├── Courses
     └── Roadmaps
-    
-Installation & Setup
-1️⃣ Clone Repository
-git clone <your-repo-url>
-2️⃣ Install Dependencies
-Frontend
-cd frontend
-npm install
-Backend
-cd backend
-npm install
-3️⃣ Configure Environment Variables
 
-Create .env inside backend:
+Recommendation Engine Flow
+
+User Profile → Career Goal → Fetch Roadmap → Loop Through Stages
+→ Recommendation Engine → Recommended Courses → Course-Linked Project
+→ Frontend Rendering
+
+Getting Started
+
+1. Clone the repository
+
+bashgit clone https://github.com/Akhilreddy89/Trajectory.git
+
+2. Install dependencies
+
+Frontend
+
+bashcd trajectory-frontend
+npm install
+
+Backend
+
+bashcd trajectory-backend
+npm install
+
+3. Configure environment variables
+
+Create a .env file inside trajectory-backend:
 
 MONGO_URI=your_mongodb_connection
 JWT_SECRET=your_secret_key
-4️⃣ Run Backend
-npm run dev
-5️⃣ Run Frontend
-npm run dev
 
+4. Run the app
 
-Seed Database
+Backend
 
-To seed roadmap data:
+bashnpm run dev
 
-node seedRoadmaps.js
+Frontend
 
-To seed courses:
+bashnpm run dev
 
+5. Seed the database
+
+bashnode seedRoadmaps.js
 node seedCourses.js
-🧠 Recommendation Engine Flow
-User Profile
-     ↓
-Career Goal
-     ↓
-Fetch Roadmap
-     ↓
-Loop Through Stages
-     ↓
-Recommendation Engine
-     ↓
-Recommended Courses
-     ↓
-Frontend Rendering
-📸 Screenshots
-Login Page
-Modern authentication UI
-Responsive layout
-Frontend validation
-Roadmap Page
-Dynamic roadmap rendering
-Stage-wise recommendations
-Personalized learning path
-🎯 Project Goal
 
-Trajectory aims to solve the problem of:
+Roadmap (Project, not user-facing)
 
-Information overload
-Unstructured learning
-Lack of personalized guidance
-Difficulty choosing the right courses
 
-by providing:
+ Authentication system
+ Role-based roadmap generation
+ Course recommendation scoring engine
+ Course-to-project follow-up logic
+ Progress tracking & consistency heatmap
+ Notes system
+ AI chatbot mentor
+ Resume builder
+ Deployment (frontend + backend + DB)
 
-structured, personalized, AI-driven learning journeys for tech students.
 
-👨‍💻 Author
+Author
 
 Manda Akhil Reddy
-B.Tech Information Technology Student
+B.Tech Information Technology
 
-📄 License
+License
 
-This project is developed for educational and research purposes.
+Developed for educational and research purposes.
