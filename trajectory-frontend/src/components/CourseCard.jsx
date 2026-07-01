@@ -3,16 +3,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { savedCourse } from '../../services/courseServices';
 import '../style/CourseCard.css';
 
-function CourseCard({ course }) {
+function CourseCard({ course, isCompleted = false, onMarkComplete, isCompleting = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isBookmarksPage = location.pathname.includes('bookmarks');
+  const isFromSavedTab = location.pathname.includes('bookmarks') && isCompleted === false;
 
   const saveCourse = async (e) => {
     e.stopPropagation(); 
     try {
       await savedCourse(course._id);
-      alert("Course saved successfully!");
     } catch (err) {
       console.error("Component catch received:", err);
       alert("Failed to save course");
@@ -45,15 +45,36 @@ function CourseCard({ course }) {
         </div>
       </div>
 
-      {course.url && (
+      {isFromSavedTab && onMarkComplete ? (
+        <button 
+          className="action-btn complete-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMarkComplete(course._id);
+          }}
+          disabled={isCompleting}
+        >
+          {isCompleting ? (
+            <>
+              <span className="btn-spinner"></span>
+              Completing...
+            </>
+          ) : (
+            <>
+              ✓ Mark as Completed
+            </>
+          )}
+        </button>
+      ) : course.url && (
         <a 
-          className="course-link"
+          className={`course-link ${isCompleted ? 'course-link-completed' : ''}`}
           href={course.url}
           target="_blank"
           rel="noopener noreferrer"
           onClick={goToCourse}
+          style={{ pointerEvents: isCompleted ? 'none' : 'auto' }}
         >
-          Start Learning →
+          {isCompleted ? "✓ Completed" : "Start Learning →"}
         </a>
       )}
     </div>

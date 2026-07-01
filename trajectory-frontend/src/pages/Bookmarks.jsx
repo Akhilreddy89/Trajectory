@@ -8,6 +8,7 @@ function Bookmarks() {
     const [savedCourses, setSavedCourses] = useState([]);
     const [completedCourses, setCompletedCourses] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [completingCourseId, setCompletingCourseId] = useState(null);
 
     const fetchAllDashboardData = async () => {
         try {
@@ -48,7 +49,6 @@ function Bookmarks() {
         e.stopPropagation();
         try {
             await deleteSavedCourse(bookmarkId);
-            alert("Course removed from bookmarks!");
             fetchAllDashboardData();
         } catch (err) {
             console.error(err);
@@ -58,13 +58,15 @@ function Bookmarks() {
 
     const handleMarkCompleted = async (e, courseId) => {
         e.stopPropagation();
+        setCompletingCourseId(courseId);
         try {
             await completedCourse(courseId);
-            alert("Course marked as completed!");
             await fetchAllDashboardData();
+            setCompletingCourseId(null);
         } catch (err) {
             console.error(err);
             alert("Failed to mark course as completed.");
+            setCompletingCourseId(null);
         }
     };
 
@@ -116,15 +118,11 @@ function Bookmarks() {
                                     >
                                         🗑️
                                     </button>
-                                    <CourseCard course={savedCourse.courseId} />
-                                    <div className="bookmark-actions-bar">
-                                        <button 
-                                            className="action-btn complete-btn"
-                                            onClick={(e) => handleMarkCompleted(e, savedCourse.courseId._id)}
-                                        >
-                                            ✓ Mark as Completed
-                                        </button>
-                                    </div>
+                                    <CourseCard 
+                                        course={savedCourse.courseId} 
+                                        onMarkComplete={handleMarkCompleted}
+                                        isCompleting={completingCourseId === savedCourse.courseId._id}
+                                    />
                                 </div>
                             );
                         })}
@@ -142,10 +140,7 @@ function Bookmarks() {
                             if (!targetCourseDetails) return null;
                             return (
                                 <div key={item._id} className="bookmark-card-wrapper completed-greyed-card">
-                                    <div className="completed-success-ribbon">
-                                        Completed ✓
-                                    </div>
-                                    <CourseCard course={targetCourseDetails} />
+                                    <CourseCard course={targetCourseDetails} isCompleted={true} />
                                 </div>
                             );
                         })}

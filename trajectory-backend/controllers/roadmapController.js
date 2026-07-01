@@ -14,7 +14,7 @@ const buildMergedStages = async (roadmap, profile, userId) => {
           (r.order !== undefined && r.order === stageOrderNum) ||
           r.title === stage.title
       );
-      const recommendedCourses = await getStageRecommendedCourses(userId, stage.skills);
+      const recommendedCourses = await getStageRecommendedCourses(userId, stage.skills, profile);
 
       return {
         ...stage.toObject(),
@@ -49,7 +49,7 @@ const getRoadmap = async (req, res) => {
 
     const stagesWithCourses = await Promise.all(
       roadmap.stages.map(async (stage, idx) => {
-        const recommendedCourses = await getStageRecommendedCourses(req.user, stage.skills);
+        const recommendedCourses = await getStageRecommendedCourses(req.user, stage.skills, profile);
         const stageOrder = stage.order !== undefined ? stage.order : idx + 1;
         const normalizedStageTitle = normalizeTitle(stage.title);
 
@@ -115,7 +115,8 @@ const completeStage = async (req, res) => {
       return (
         (rOrder !== undefined && (rOrder.toString() === stageOrder || rOrder === Number(stageOrder))) ||
         r.title === stageOrder ||
-        r.title === String(stageOrder)
+        r.title === String(stageOrder) ||
+        r.skills?.includes(stageOrder)
       );
     });
 
@@ -124,6 +125,24 @@ const completeStage = async (req, res) => {
     }
 
     profile.roadmap[stageIndex].status = "completed";
+
+    // Add stage skills to profile
+    const blueprintStage = roadmap.stages.find(
+      (s) => s.order === profile.roadmap[stageIndex].order || s.title === profile.roadmap[stageIndex].title
+    );
+
+    if (blueprintStage && blueprintStage.skills && blueprintStage.skills.length > 0) {
+      blueprintStage.skills.forEach((skill) => {
+        const skillExists = profile.skills.some(
+          (s) => s.name.toLowerCase() === skill.toLowerCase()
+        );
+        if (!skillExists) {
+          profile.skills.push({ name: skill, level: "beginner" });
+        }
+      });
+    }
+
+    console.log("Profile roadmap after completion:", profile.roadmap[stageIndex]);
     await profile.save();
 
     const mergedStages = await buildMergedStages(roadmap, profile, req.user);
@@ -166,6 +185,20 @@ const undoStageController = async (req, res) => {
     }
 
     profile.roadmap[stageIndex].status = "pending";
+
+    // Remove stage skills from profile
+    const blueprintStage = roadmap.stages.find(
+      (s) => s.order === profile.roadmap[stageIndex].order || s.title === profile.roadmap[stageIndex].title
+    );
+
+    if (blueprintStage && blueprintStage.skills && blueprintStage.skills.length > 0) {
+      blueprintStage.skills.forEach((skill) => {
+        profile.skills = profile.skills.filter(
+          (s) => s.name.toLowerCase() !== skill.toLowerCase()
+        );
+      });
+    }
+
     await profile.save();
 
     const mergedStages = await buildMergedStages(roadmap, profile, userId);

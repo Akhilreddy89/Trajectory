@@ -5,7 +5,6 @@
 import mongoose from "mongoose";
 import Course from "./models/Course.js"; // adjust path as needed
 
-// ─── Connection ───────────────────────────────────────────────────────────────
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/Trajectory";
 
 export async function connectDB() {
@@ -18,14 +17,8 @@ export async function connectDB() {
   }
 }
 
-// ─── Course Seed Data ─────────────────────────────────────────────────────────
 export const coursesData = [
 
-  // ══════════════════════════════════════════════════════════
-  //  FRONTEND
-  // ══════════════════════════════════════════════════════════
-
-  // HTML & CSS
   {
     title: "Responsive Web Design Certification",
     description: "Learn HTML and CSS by building 15 projects including a survey form, tribute page, product landing page, and personal portfolio. Free, self-paced, and fully project-based.",

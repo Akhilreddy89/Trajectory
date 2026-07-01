@@ -20,15 +20,15 @@
   align-items: flex-start;
 } */
 
-/* .profile-container {
-  max-width: 760px;
+.profile-container {
+  max-width: 100%;
   width: 100%;
-  background: #ffffff;
+  background: var(--surface-tint);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
   padding: 40px;
-} */
+}
 
 /* Header UI Elements */
 .profile-header {
@@ -85,6 +85,7 @@
 
 .form-field {
   display: flex;
+  width: 100%;  
   flex-direction: column;
   gap: 8px;
 }
@@ -106,7 +107,7 @@
   padding: 12px 16px;
   font-size: 0.95rem;
   color: var(--ink);
-  background: #ffffff;
+  background: var(--surface-tint);
   transition: all var(--transition);
 }
 
@@ -121,7 +122,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  background: #fdfdfd;
+  background: var(--surface-tint);
   border: 1px dashed var(--border-color);
   padding: 12px;
   border-radius: var(--radius-sm);
@@ -131,7 +132,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #f3f4f6;
+  background: var(--surface-tint);
   border: 1px solid var(--border-color);
   border-radius: 999px;
   padding: 6px 14px;
@@ -174,7 +175,7 @@
 }
 
 .add-btn {
-  background: var(--ink);
+  background: var(--p);
   color: #ffffff;
   border: none;
   border-radius: var(--radius-sm);
@@ -230,7 +231,7 @@
 }
 
 .btn-back {
-  background: #ffffff;
+  background: var(--surface-tint);
   color: var(--ink-2);
   border: 1px solid var(--border-color) !important;
 }
@@ -240,21 +241,22 @@
   color: var(--ink);
 }
 
-/* Step 5: Advanced Review Structural Cards Grid */
 .review-subtitle {
   color: var(--ink-2);
   margin-top: -16px;
-  font-size: 0.9rem;
+
 }
 
 .review-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+
 }
 
 .review-card {
-  background: #f9fafb;
+  /* background: #f9fafb; */
+  background: var(--surface-tint);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 20px;
@@ -272,7 +274,10 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--p);
+  /* color: var(--p);
+   */
+  font-size: 0.9rem;
+  font-weight: bolder;
   margin: 0;
 }
 
@@ -284,7 +289,7 @@
 
 .detail-row {
   display: flex;
-  justify-content: space-between;
+  gap:12px;
   font-size: 0.9rem;
   color: var(--ink);
 }
@@ -295,7 +300,7 @@
 
 .badge-highlight {
   background: #eef2ff;
-  color: var(--p-dark);
+  /* color: var(--p-dark); */
   padding: 8px 14px;
   border-radius: var(--radius-sm);
   font-weight: 600;
@@ -319,8 +324,12 @@
 }
 
 .text-p {
-  color: var(--p-dark);
+  /* color: var(--p-dark); */
+   /* color:#5ce7b9; */
+  font-family: var(--font-sans);
   border-color: rgba(99, 102, 241, 0.2);
+  font-weight: light;
+  /* background: rgba(16, 185, 129, 0.06); */
 }
 
 .capitalize { text-transform: capitalize; }

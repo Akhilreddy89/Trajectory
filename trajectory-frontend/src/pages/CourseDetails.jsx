@@ -90,31 +90,27 @@ function CourseDetails() {
     <div className="course-details-page">
       <div className="course-details-container">
         
-        {/* Navigation Action header control */}
         <button className="back-navigation-btn" onClick={() => navigate(-1)}>
           ← Back to Explorer
         </button>
 
-        {/* Course Header */}
         <div className="details-main-header">
           <h1 className="course-title-display">{course.title}</h1>
+        
           
-          {/* Elegant Unified Meta Tags */}
           <div className="course-meta-tags-row">
-            <span className="meta-tag tag-source">🏛️ {course.source}</span>
-            <span className="meta-tag tag-level">🎯 {course.level}</span>
-            {course.type && <span className="meta-tag tag-type">⚡ {course.type}</span>}
-            <span className="meta-tag tag-category">📁 {course.category}</span>
+            <span className="meta-tag tag-source">{course.source}</span>
+            <span className="meta-tag tag-level">{course.level}</span>
+            {course.type && <span className="meta-tag tag-type">{course.type}</span>}
+            <span className="meta-tag tag-category">{course.category}</span>
           </div>
         </div>
 
-        {/* Course Description */}
         <div className="details-content-section">
           <h2>Overview & Scope</h2>
           <p className="description-text-block">{course.description}</p>
         </div>
 
-        {/* Dynamic Skills Array Map Grid */}
         {course.skills && course.skills.length > 0 && (
           <div className="details-content-section">
             <h2>Skills You'll Master</h2>
@@ -130,22 +126,26 @@ function CourseDetails() {
             </div>
           </div>
         )}
+        {/* {course.duration && (
+          <div className="details-content-section">
+            <h2>Estimated Completion Time</h2>
+            <p>{course.duration}</p>
+          </div>
+        )} */}
 
-        {/* Career Targets Maps */}
         {course.careerPaths && course.careerPaths.length > 0 && (
           <div className="details-content-section">
             <h2>Target Professional Paths</h2>
             <div className="careers-pill-box-flex">
               {course.careerPaths.map((path, index) => (
                 <span key={index} className="pill-career-node">
-                  💼 {path}
+                  {path}
                 </span>
               ))}
             </div>
           </div>
         )}
 
-        {/* Execution Actions Footnotes Panel */}
         <div className="course-actions-footer-bar">
           {course.url && (
             <a
