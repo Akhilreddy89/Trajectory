@@ -64,7 +64,7 @@ The current build phase: tying project suggestions to the specific skills a user
 
 Tech Stack
 
-Frontend: React.js, Tailwind CSS, Axios, React Router DOM
+Frontend: React.js, CSS, Axios, React Router DOM
 Backend: Node.js, Express.js, JWT Authentication
 Database: MongoDB, Mongoose
 
