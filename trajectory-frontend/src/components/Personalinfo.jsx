@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useProfile } from "../context/ProfileContext.jsx";
 import { getProfile } from "../../services/profileService.js";
 import { getRecommendations } from "../../services/recomendationServives.js";
 import { getCompleteRoadmap, currentStage } from "../../services/roadmapServices.js";
@@ -8,6 +9,7 @@ import "../style/personalinfo.css";
 
 function Personalinfo() {
   const navigate = useNavigate();
+  const { profile: profileContext } = useProfile();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({
     fullName: "", college: "", branch: "", year: "",
@@ -26,6 +28,11 @@ function Personalinfo() {
   });
 
   useEffect(() => {
+    if (!profileContext) {
+      setLoading(false);
+      return;
+    }
+
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
@@ -86,14 +93,14 @@ function Personalinfo() {
           setCompletedCount(data?.count || courses.length);
         }
       } catch (err) {
-        console.error("Dashboard fetch error:", err);
+        // Ignore dashboard fetch failures while onboarding is incomplete
       } finally {
         setLoading(false);
       }
     };
 
     fetchDashboardData();
-  }, []);
+  }, [profileContext]);
 
   if (loading) {
     return (

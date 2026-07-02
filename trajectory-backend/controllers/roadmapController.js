@@ -5,20 +5,31 @@ import { getStageRecommendedCourses } from "../services/recommendation.js";
 const normalizeTitle = (title) =>
   title?.toString().trim().toLowerCase() || "";
 
+const resolveStageOrder = (stage, idx) =>
+  stage.order !== undefined ? stage.order : idx + 1;
+
+// Single source of truth for merging a blueprint roadmap with a user's profile progress.
 const buildMergedStages = async (roadmap, profile, userId) => {
+  const userRoadmap = profile.roadmap || [];
+
   return Promise.all(
     roadmap.stages.map(async (stage, idx) => {
-      const stageOrderNum = stage.order !== undefined ? stage.order : idx + 1;
-      const match = profile.roadmap.find(
-        (r) =>
-          (r.order !== undefined && r.order === stageOrderNum) ||
-          r.title === stage.title
-      );
+      const stageOrder = resolveStageOrder(stage, idx);
+      const normalizedStageTitle = normalizeTitle(stage.title);
+
+      const match = userRoadmap.find((r) => {
+        const rOrder = Number(r.order);
+        if (Number.isFinite(rOrder)) {
+          return rOrder === stageOrder;
+        }
+        return normalizeTitle(r.title) === normalizedStageTitle;
+      });
+
       const recommendedCourses = await getStageRecommendedCourses(userId, stage.skills, profile);
 
       return {
         ...stage.toObject(),
-        order: stageOrderNum,
+        order: stageOrder,
         status: match ? match.status : "pending",
         recommendedCourses,
       };
@@ -33,49 +44,28 @@ const calcProgress = (stages) => {
   return { totalStages, completedCount, percentage, remaining: totalStages - completedCount };
 };
 
+const loadProfileAndRoadmap = async (userId) => {
+  const profile = await Profile.findOne({ userId });
+  if (!profile) return { error: { status: 404, message: "Profile not found" } };
+
+  const roadmap = await Roadmap.findOne({ role: profile.careerGoal });
+  if (!roadmap) return { error: { status: 404, message: "Roadmap not found" } };
+
+  return { profile, roadmap };
+};
+
 const getRoadmap = async (req, res) => {
   try {
-    const profile = await Profile.findOne({ userId: req.user });
-    if (!profile) {
-      return res.status(404).json({ success: false, message: "Profile not found" });
-    }
+    const { profile, roadmap, error } = await loadProfileAndRoadmap(req.user);
+    if (error) return res.status(error.status).json({ success: false, message: error.message });
 
-    const roadmap = await Roadmap.findOne({ role: profile.careerGoal });
-    if (!roadmap) {
-      return res.status(404).json({ success: false, message: "Roadmap not found" });
-    }
-
-    const userRoadmap = profile.roadmap || [];
-
-    const stagesWithCourses = await Promise.all(
-      roadmap.stages.map(async (stage, idx) => {
-        const recommendedCourses = await getStageRecommendedCourses(req.user, stage.skills, profile);
-        const stageOrder = stage.order !== undefined ? stage.order : idx + 1;
-        const normalizedStageTitle = normalizeTitle(stage.title);
-
-        const match = userRoadmap.find((r) => {
-          const rOrder = Number(r.order);
-          const normalizedROrder = Number.isFinite(rOrder) ? rOrder : undefined;
-          if (normalizedROrder !== undefined) {
-            return normalizedROrder === stageOrder;
-          }
-          return normalizeTitle(r.title) === normalizedStageTitle;
-        });
-
-        return {
-          ...stage.toObject(),
-          order: stageOrder,
-          status: match ? match.status : "pending",
-          recommendedCourses,
-        };
-      })
-    );
+    const mergedStages = await buildMergedStages(roadmap, profile, req.user);
 
     return res.json({
       success: true,
       ...roadmap.toObject(),
-      stages: stagesWithCourses,
-      progress: calcProgress(stagesWithCourses),
+      stages: mergedStages,
+      progress: calcProgress(mergedStages),
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
@@ -85,21 +75,18 @@ const getRoadmap = async (req, res) => {
 const completeStage = async (req, res) => {
   try {
     const { stageOrder } = req.params;
-
-    const profile = await Profile.findOne({ userId: req.user });
-    if (!profile) {
-      return res.status(404).json({ success: false, message: "Profile not found" });
+    if (!stageOrder) {
+      return res.status(400).json({ success: false, message: "stageOrder is required" });
     }
 
-    const roadmap = await Roadmap.findOne({ role: profile.careerGoal });
-    if (!roadmap) {
-      return res.status(404).json({ success: false, message: "Roadmap not found" });
-    }
+    const { profile, roadmap, error } = await loadProfileAndRoadmap(req.user);
+    if (error) return res.status(error.status).json({ success: false, message: error.message });
 
     if (!profile.roadmap) profile.roadmap = [];
 
+    // Ensure the profile has an entry for every blueprint stage before matching.
     roadmap.stages.forEach((blueprintStage, idx) => {
-      const expectedOrder = blueprintStage.order !== undefined ? blueprintStage.order : idx + 1;
+      const expectedOrder = resolveStageOrder(blueprintStage, idx);
       const userHasStage = profile.roadmap.some(
         (r) => r.order === expectedOrder || r.title === blueprintStage.title
       );
@@ -114,9 +101,7 @@ const completeStage = async (req, res) => {
       const rOrder = r.order !== undefined ? r.order : undefined;
       return (
         (rOrder !== undefined && (rOrder.toString() === stageOrder || rOrder === Number(stageOrder))) ||
-        r.title === stageOrder ||
-        r.title === String(stageOrder) ||
-        r.skills?.includes(stageOrder)
+        r.title === stageOrder
       );
     });
 
@@ -126,12 +111,11 @@ const completeStage = async (req, res) => {
 
     profile.roadmap[stageIndex].status = "completed";
 
-    // Add stage skills to profile
     const blueprintStage = roadmap.stages.find(
       (s) => s.order === profile.roadmap[stageIndex].order || s.title === profile.roadmap[stageIndex].title
     );
 
-    if (blueprintStage && blueprintStage.skills && blueprintStage.skills.length > 0) {
+    if (blueprintStage?.skills?.length > 0) {
       blueprintStage.skills.forEach((skill) => {
         const skillExists = profile.skills.some(
           (s) => s.name.toLowerCase() === skill.toLowerCase()
@@ -142,7 +126,6 @@ const completeStage = async (req, res) => {
       });
     }
 
-    console.log("Profile roadmap after completion:", profile.roadmap[stageIndex]);
     await profile.save();
 
     const mergedStages = await buildMergedStages(roadmap, profile, req.user);
@@ -160,38 +143,30 @@ const completeStage = async (req, res) => {
 
 const undoStageController = async (req, res) => {
   try {
-    const userId = req.user;
     const { order } = req.body;
+    const numericOrder = Number(order);
 
-    if (!order) {
-      return res.status(400).json({ success: false, message: "Order is required" });
+    if (order === undefined || order === null || !Number.isFinite(numericOrder)) {
+      return res.status(400).json({ success: false, message: "A valid numeric order is required" });
     }
 
-    const profile = await Profile.findOne({ userId });
-    if (!profile) {
-      return res.status(404).json({ success: false, message: "Profile not found" });
-    }
-
-    const roadmap = await Roadmap.findOne({ role: profile.careerGoal });
-    if (!roadmap) {
-      return res.status(404).json({ success: false, message: "Roadmap not found" });
-    }
+    const { profile, roadmap, error } = await loadProfileAndRoadmap(req.user);
+    if (error) return res.status(error.status).json({ success: false, message: error.message });
 
     if (!profile.roadmap) profile.roadmap = [];
 
-    const stageIndex = profile.roadmap.findIndex((r) => Number(r.order) === Number(order));
+    const stageIndex = profile.roadmap.findIndex((r) => Number(r.order) === numericOrder);
     if (stageIndex === -1) {
-      return res.status(404).json({ success: false, message: `Stage with order ${order} not found` });
+      return res.status(404).json({ success: false, message: `Stage with order ${numericOrder} not found` });
     }
 
     profile.roadmap[stageIndex].status = "pending";
 
-    // Remove stage skills from profile
     const blueprintStage = roadmap.stages.find(
       (s) => s.order === profile.roadmap[stageIndex].order || s.title === profile.roadmap[stageIndex].title
     );
 
-    if (blueprintStage && blueprintStage.skills && blueprintStage.skills.length > 0) {
+    if (blueprintStage?.skills?.length > 0) {
       blueprintStage.skills.forEach((skill) => {
         profile.skills = profile.skills.filter(
           (s) => s.name.toLowerCase() !== skill.toLowerCase()
@@ -201,7 +176,7 @@ const undoStageController = async (req, res) => {
 
     await profile.save();
 
-    const mergedStages = await buildMergedStages(roadmap, profile, userId);
+    const mergedStages = await buildMergedStages(roadmap, profile, req.user);
 
     return res.status(200).json({
       success: true,
@@ -209,7 +184,7 @@ const undoStageController = async (req, res) => {
       stages: mergedStages,
       progress: calcProgress(mergedStages),
     });
-  } catch (error) {
+  } catch (err) {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

@@ -1,17 +1,23 @@
 import Profile from "../models/Profile.js";
-import User from "../models/User.js";
+
 const getProfile = async (req, res) => {
   try {
     const profile = await Profile.findOne({ userId: req.user });
+
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: "Profile not found",
+      });
+    }
+
     res.json({
       success: true,
-      profile: profile || null,
+      profile,
     });
   } catch (error) {
-    console.error("PROFILE ERROR:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
-
-export { getProfile};
+export { getProfile };

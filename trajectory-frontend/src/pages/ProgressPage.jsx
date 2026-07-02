@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useProfile } from "../context/ProfileContext.jsx";
 import { getCompleteRoadmap } from "../../services/roadmapServices.js";
 import "../style/Progress.css";
 
 function Progress() {
   const navigate = useNavigate();
+  const { profile } = useProfile();
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({
     role: "",
@@ -18,6 +20,11 @@ function Progress() {
   });
 
   useEffect(() => {
+    if (!profile) {
+      setLoading(false);
+      return;
+    }
+
     const fetchProgressData = async () => {
       try {
         const res = await getCompleteRoadmap();
@@ -56,13 +63,12 @@ function Progress() {
         }
         setLoading(false);
       } catch (err) {
-        console.error("Error loading workspace status indicators:", err);
         setLoading(false);
       }
     };
 
     fetchProgressData();
-  }, []);
+  }, [profile]);
 
   if (loading) {
     return (

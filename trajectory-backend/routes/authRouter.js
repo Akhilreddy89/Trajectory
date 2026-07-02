@@ -1,9 +1,13 @@
 import { Router } from "express";
-import { loginUser,registerUser,getCurrentUser} from "../controllers/authController.js";
-import authMiddleware from "../middlewares/authMiddleware.js";
+import { loginUser, registerUser, logoutUser, getCurrentUser } from "../controllers/authController_cookie.js";
+import { authLimiter } from "../middlewares/authlimiter.js";
+import requireAuth from "../middlewares/requestAuth.js";
+
 const authRouter = Router();
 
-authRouter.post("/login", loginUser);
-authRouter.post("/register", registerUser);
-authRouter.get('/me', authMiddleware, getCurrentUser);
+authRouter.post("/login", authLimiter, loginUser);
+authRouter.post("/register", authLimiter, registerUser);
+authRouter.post("/logout", logoutUser);
+authRouter.get('/me', requireAuth, getCurrentUser);
+
 export default authRouter;

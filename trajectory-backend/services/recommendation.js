@@ -1,12 +1,21 @@
 import Course from "../models/Course.js";
 import Profile from "../models/Profile.js";
 import mongoose from "mongoose";
-//UPdated Entire recommendation with new learning style also 
 
 const normalizeArray = (arr) => arr.map((item) => item.toLowerCase());
 
 const getUniqueMatchedSkills = (courseSkills, userSkills) =>
   [...new Set(courseSkills)].filter((skill) => userSkills.includes(skill));
+
+const skillsOverlap = (courseSkills = [], targetSkills = []) => {
+  const normalizedTargets = targetSkills.map((s) => s.toString().trim().toLowerCase());
+  return courseSkills.some((cs) => {
+    const normalizedCourseSkill = cs.toString().trim().toLowerCase();
+    return normalizedTargets.some(
+      (t) => normalizedCourseSkill === t || normalizedCourseSkill.includes(t) || t.includes(normalizedCourseSkill)
+    );
+  });
+};
 
 const scoreACourse = (course, profile) => {
   let score = 0;
@@ -43,7 +52,6 @@ const scoreACourse = (course, profile) => {
 };
 
 export const getRecommendedCourses = async (userId) => {
-  console.log(userId);
   const profile = await Profile.findOne({
     userId: new mongoose.Types.ObjectId(userId)
   });
@@ -69,16 +77,29 @@ export const getRecommendedCourses = async (userId) => {
     .slice(0, 20);
 };
 
-export const getStageRecommendedCourses = async (userId, stageSkills) => {
-  const profile = await Profile.findOne({ userId });
-  if (!profile) throw new Error("Profile not found");
+export const getStageRecommendedCourses = async (userId, stageSkills, profile = null) => {
+  let resolvedProfile = profile;
+  if (!resolvedProfile) {
+    resolvedProfile = await Profile.findOne({ userId });
+    if (!resolvedProfile) throw new Error("Profile not found");
+  }
 
-  const courses = await Course.find({ skills: { $in: stageSkills } });
+  if (!stageSkills || stageSkills.length === 0) return [];
 
-  return courses
+  const regexSkills = stageSkills.map(
+    (s) => new RegExp(s.toString().trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i")
+  );
+
+  const candidateCourses = await Course.find({ skills: { $in: regexSkills } });
+
+  const matchedCourses = candidateCourses.filter((course) =>
+    skillsOverlap(course.skills, stageSkills)
+  );
+
+  return matchedCourses
     .map((course) => ({
       ...course.toObject(),
-      recommendationScore: scoreACourse(course, profile),
+      recommendationScore: scoreACourse(course, resolvedProfile),
     }))
     .sort((a, b) => b.recommendationScore - a.recommendationScore)
     .slice(0, 3);

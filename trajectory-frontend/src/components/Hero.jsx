@@ -32,11 +32,11 @@ const Hero = () => {
               Start for free &rarr;
             </button>
           </Link>
-          <a href="#how-it-works">
+          <Link to="/#how-it-works">
             <button className="btn-outline btn-lg">
               ▶&nbsp; See how it works
             </button>
-          </a>
+          </Link>
         </div>
 
         {/* Social proof */}

@@ -1,11 +1,8 @@
 import api from "./api";
+
 export const getLogin = async (form) => {
   try {
-    const res = await api.post("/login", form);
-    if (res.status === 200) {
-      localStorage.setItem("token", res.data.token);
-    }
-    return res;
+    return await api.post("/login", form);
   } catch (error) {
     if (error.response) {
       const status = error.response.status;
@@ -30,8 +27,7 @@ export const getLogin = async (form) => {
 
 export const getRegister = async (form) => {
   try {
-    const res = await api.post("/register", form);
-    return res;
+    return await api.post("/register", form);
   } catch (error) {
     if (error.response) {
       const status = error.response.status;
@@ -56,14 +52,23 @@ export const getRegister = async (form) => {
 
 export const getCurrentUser = async () => {
   try {
-    const res = await api.get("/me");
-    return res;
+    return await api.get("/me");
   } catch (error) {
     if (error.response?.status === 401) {
-      throw new Error("Session expired. Please log in again.");
+      throw error;
     }
     throw new Error("Failed to fetch user. Check your connection.");
   }
 };
 
+export const logoutUser = async () => {
+  try {
+    return await api.post("/logout");
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw error;
+    }
+    throw new Error("Logout failed. Please try again.");
+  }
+};
 

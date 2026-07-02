@@ -57,7 +57,6 @@ function Register() {
       }
     } catch (err) {
       setStatusMessage(err.message || "Server error. Please try again later.");
-      console.error(err);
     }
   };
 

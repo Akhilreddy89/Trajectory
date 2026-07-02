@@ -14,8 +14,6 @@ const recommendedCourses = async (
       courses,
     });
   } catch (err) {
-    console.error(err);
-
     res.status(500).json({
       success: false,
       message: err.message,
@@ -31,8 +29,6 @@ const homecourses = async (req, res) => {
       courses,
     });
   } catch (err) {
-    console.error(err);
-
     res.status(500).json({
       success: false,
       message: err.message,
@@ -57,8 +53,6 @@ const getCourseById = async (req, res) => {
       course,
     });
   } catch (err) {
-    console.error(err);
-
     res.status(500).json({
       success: false,
       message: err.message,
@@ -108,8 +102,6 @@ const saveCourse = async (req, res) => {
       message: "Course saved successfully",
     });
   } catch (err) {
-    console.error(err);
-
     res.status(500).json({
       success: false,
       message: err.message,
@@ -145,8 +137,6 @@ const getSavedCourses = async (
       savedCourses,
     });
   } catch (err) {
-    console.error(err);
-
     res.status(500).json({
       success: false,
       message: err.message,
@@ -175,7 +165,6 @@ const deleteCourse = async (req, res) => {
       message: "Course deleted successfully",
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({
       success: false,
       message: err.message,
@@ -276,8 +265,6 @@ const markCompleted = async (req, res) => {
       profile,
     });
   } catch (err) {
-    console.error(err);
-
     res.status(500).json({
       success: false,
       message: err.message,
@@ -334,10 +321,9 @@ const getCompletedCourses = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("GET COMPLETED COURSES CONTROLLER ERROR:", error.message);
     return res.status(500).json({ 
       success: false, 
-      message: "Internal Server Error context trace pinpoint." 
+      message: "Internal Server Error" 
     });
   }
 };

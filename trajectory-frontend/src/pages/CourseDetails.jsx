@@ -26,11 +26,10 @@ function CourseDetails() {
           );
           if (alreadyBookmarked) setIsSaved(true);
         } catch (statusErr) {
-          console.log("Non-critical bookmark state sync pass:", statusErr.message);
+          // Ignore non-critical bookmark state sync issues
         }
 
       } catch (err) {
-        console.error("Error fetching course:", err);
         setError("Failed to load course details. Please return later.");
       } finally {
         setLoading(false);
@@ -41,17 +40,14 @@ function CourseDetails() {
   }, [courseId]);
 
   const handleSaveCourse = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     try {
       await savedCourse(courseId);
       setIsSaved(true);
     } catch (err) {
-      console.error("Error saving course:", err);
+      if (err.response?.status === 401) {
+        navigate("/login");
+        return;
+      }
       if (err.response?.status === 400) {
         setIsSaved(true);
       }

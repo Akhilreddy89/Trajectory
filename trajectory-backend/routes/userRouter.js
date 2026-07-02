@@ -1,5 +1,5 @@
 import { Router } from "express";
-import authMiddleware from "../middlewares/authMiddleware.js";
+import requireAuth from "../middlewares/requestAuth.js";
 import {
   dashboardController,
   getProfile,
@@ -9,8 +9,8 @@ import { recommendedCourses } from "../controllers/courseController.js";
 
 const userRouter = Router();
 
-userRouter.get("/dashboard", authMiddleware, dashboardController);
-userRouter.get("/profile", authMiddleware, getProfile);
-userRouter.put("/profile", authMiddleware, saveProfile);
-userRouter.get('/recommendations', authMiddleware, recommendedCourses);
+userRouter.get("/dashboard", requireAuth, dashboardController);
+userRouter.get("/profile", requireAuth, getProfile);
+userRouter.put("/profile", requireAuth, saveProfile);
+userRouter.get('/recommendations', requireAuth, recommendedCourses);
 export default userRouter;

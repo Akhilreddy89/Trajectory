@@ -1,11 +1,11 @@
 import { Router } from "express";
-import authMiddleware from "../middlewares/authMiddleware.js";
+import requireAuth from "../middlewares/requestAuth.js";
 import {
   getProfile 
 } from "../controllers/profileController.js";
 
 const profileRouter = Router();
 
-profileRouter.get('/me', authMiddleware, getProfile);
+profileRouter.get('/me', requireAuth, getProfile);
 
 export default profileRouter;

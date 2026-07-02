@@ -2,10 +2,21 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// Improved Entire Authentication flow with better error handling, input validation, and security measures. Added email normalization and regex validation for email format. Passwords are hashed using bcrypt, and JWT tokens are generated for authenticated users.
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const normalizeEmail = (email) => email?.toString().trim().toLowerCase();
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // requires HTTPS in prod
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" needed for cross-site (Vercel <-> Render)
+  maxAge: 24 * 60 * 60 * 1000, // 1 day, matches JWT expiry
+};
+
+const issueTokenCookie = (res, userId) => {
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  res.cookie("token", token, COOKIE_OPTIONS);
+};
 
 const loginUser = async (req, res) => {
   try {
@@ -17,9 +28,6 @@ const loginUser = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-
-    // Always return the same generic message whether the email exists or not,
-    // and whether the password is wrong — prevents user enumeration.
     if (!user) {
       return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
@@ -29,10 +37,10 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    issueTokenCookie(res, user._id);
 
     const { password: _, ...safeUser } = user.toObject();
-    res.json({ success: true, message: "Login successful", user: safeUser, token });
+    res.json({ success: true, message: "Login successful", user: safeUser });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
@@ -62,11 +70,18 @@ const registerUser = async (req, res) => {
     const newUser = new User({ fullname: fullname.trim(), email, password: hashedPassword });
     await newUser.save();
 
+    issueTokenCookie(res, newUser._id);
+
     const { password: _, ...safeUser } = newUser.toObject();
     res.status(201).json({ success: true, message: "User registered successfully", user: safeUser });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
+};
+
+const logoutUser = async (req, res) => {
+  res.clearCookie("token", COOKIE_OPTIONS);
+  res.json({ success: true, message: "Logged out successfully" });
 };
 
 const getCurrentUser = async (req, res) => {
@@ -81,4 +96,4 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-export { loginUser, registerUser, getCurrentUser };
+export { loginUser, registerUser, logoutUser, getCurrentUser };

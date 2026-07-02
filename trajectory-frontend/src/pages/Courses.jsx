@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useProfile } from "../context/ProfileContext.jsx";
 import Recommendations from "./Recommendations";
 import { searchCourses } from "../../services/courseServices.js";
 import CourseCard from "../components/CourseCard.jsx";
 import "../style/courses.css";
 
 function Courses() {
+  const { profile } = useProfile();
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
 
@@ -14,7 +16,7 @@ function Courses() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!query.trim()) {
+    if (!profile || !query.trim()) {
       setResults([]);
       setError(null);
       return;
@@ -35,7 +37,7 @@ function Courses() {
     };
 
     fetchResults();
-  }, [query]); 
+  }, [profile, query]); 
 
   return (
     <div className="courses-page">

@@ -10,6 +10,7 @@ import {
 import "./index.css";
 
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { ProfileProvider } from "./context/ProfileContext.jsx";
 
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
@@ -43,48 +44,23 @@ createRoot(document.getElementById("root")).render(
             <Route path="/about" element={<About />} />
           </Route>
           {/* Protected Routes */}
-
           <Route element={<ProtectedRoute />}>
-            <Route element={<AppLayout />}>
-              <Route
-                path="/dashboard"
-                element={<Dashboard />}
-              />
-
-              <Route
-                path="/course/:courseId"
-                element={<CourseDetails />}
-              />
-
-              <Route
-                path="/progress"
-                element={<Progress />}
-              />
-
-              <Route
-                path="/settings"
-                element={<Settings />}
-              />
-
-              <Route
-                path="/profile"
-                element={<Profile />}
-              />
-
-              <Route
-                path="/bookmarks"
-                element={<Bookmarks />}
-              />
-
-              <Route
-                path="/roadmap"
-                element={<Roadmap />}
-              />
-
-              <Route
-                path="/courses"
-                element={<Courses />}
-              />
+            <Route
+              element={
+                <ProfileProvider>
+                  <AppLayout />
+                </ProfileProvider>
+              }
+            >
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/course/:courseId" element={<CourseDetails />} />
+              <Route path="/progress" element={<Progress />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/create-profile" element={<Profile />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/bookmarks" element={<Bookmarks />} />
+              <Route path="/roadmap" element={<Roadmap />} />
+              <Route path="/courses" element={<Courses />} />
             </Route>
           </Route>
         </Routes>

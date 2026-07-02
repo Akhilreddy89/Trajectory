@@ -14,7 +14,6 @@ function CourseCard({ course, isCompleted = false, onMarkComplete, isCompleting 
     try {
       await savedCourse(course._id);
     } catch (err) {
-      console.error("Component catch received:", err);
       alert("Failed to save course");
     }
   };

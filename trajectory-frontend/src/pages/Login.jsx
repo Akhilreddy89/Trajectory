@@ -48,17 +48,15 @@ function Login() {
       const data = res.data;
       
       if (data.success) {
-        login(data.token, data.user);
-        try{
+        login(data.user);
+        try {
           const profile = await getMyProfile();
           if (!profile || !profile.fullName || profile.skills.length === 0) {
             navigate("/profile");
           } else {
             navigate("/dashboard");
           }
-        } 
-        catch(error){
-          console.error("Profile fetch failed after login:", profileErr);
+        } catch (error) {
           navigate("/profile");
         }
       }
@@ -67,7 +65,6 @@ function Login() {
       }
     } catch (err) {
       setStatusMessage(err.message || "Server error. Please try again later.");
-      console.log(err);
     }
   };
 

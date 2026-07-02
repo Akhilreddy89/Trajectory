@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useProfile } from "../context/ProfileContext.jsx";
 import CourseCard from "../components/CourseCard";
 import "../style/recommendation.css";
 import { getRecommendations } from "../../services/recomendationServives.js";
@@ -6,24 +7,29 @@ import { getRecommendations } from "../../services/recomendationServives.js";
 const CATEGORIES = ["All", "Frontend", "Backend", "Full Stack", "AI/ML", "Data Science", "Cybersecurity", "Cloud", "DevOps", "Mobile Development"];
 
 function Recommendations() {
+  const { profile } = useProfile();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
 
   useEffect(() => {
+    if (!profile) {
+      setLoading(false);
+      return;
+    }
+
     const fetchCourses = async () => {
       try {
         const res = await getRecommendations();
         setCourses(res.data.courses);
       } catch (err) {
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchCourses();
-  }, []);
+  }, [profile]);
 
   const filteredCourses =
     activeCategory === "All"

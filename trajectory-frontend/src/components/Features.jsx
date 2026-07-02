@@ -1,24 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../style/Home.css';
 
 const STEPS = [
   {
     num: '1',
-    icon: '👤',
     title: 'Build your profile',
     desc: 'Tell us your current skills, your career goal, and how you like to learn — video, docs, or hands-on projects.',
     color: 'var(--p)',
   },
   {
     num: '2',
-    icon: '📊',
     title: 'Discover your skill gaps',
     desc: 'Our engine compares your skills with what your target role actually requires — and shows exactly what is missing.',
     color: 'var(--t)',
   },
   {
     num: '3',
-    icon: '🛣️',
     title: 'Follow your roadmap',
     desc: 'Get a structured, ordered learning path with personalized resource recommendations in your preferred format.',
     color: 'var(--coral)',
@@ -30,7 +27,6 @@ const FEATURES = [
   {
     accent: true,
     iconClass: 'white',
-    icon: '🧠',
     title: 'AI skill gap engine',
     desc: 'We compare your skills against real job requirements and surface exactly what to learn next — no guesswork.',
     tag: 'Core feature',
@@ -38,7 +34,6 @@ const FEATURES = [
   },
   {
     iconClass: 'purple',
-    icon: '🛣️',
     title: 'Personalized roadmaps',
     desc: 'A step-by-step, ordered learning path built around your goal — Full Stack, ML, Cyber Security, and more.',
     tag: 'Roadmap',
@@ -46,7 +41,6 @@ const FEATURES = [
   },
   {
     iconClass: 'teal',
-    icon: '📚',
     title: 'Multi-source recommendations',
     desc: 'YouTube, Udemy, official docs, and project sites — all in one place, filtered by your learning style and level.',
     tag: 'Discovery',
@@ -54,7 +48,6 @@ const FEATURES = [
   },
   {
     iconClass: 'amber',
-    icon: '🔍',
     title: 'Smart search',
     desc: 'Search uses your profile to surface the most relevant resources for your level and goal — not just keywords.',
     tag: 'Search',
@@ -62,7 +55,6 @@ const FEATURES = [
   },
 ];
 
-/* ── Skill gap preview data ─────────────────────── */
 const GAPS = [
   { skill: 'HTML & CSS',  pct: 100, label: '100% — complete',    status: 'done', fill: '#00B894' },
   { skill: 'JavaScript', pct: 100, label: '100% — complete',    status: 'done', fill: '#00B894' },
@@ -71,7 +63,6 @@ const GAPS = [
   { skill: 'MongoDB',     pct: 0,   label: '0% — not started',   status: 'none', fill: '#E8E6F5' },
 ];
 
-/* ── Stats data ─────────────────────────────────── */
 const STATS = [
   { num: '12K+', label: 'Active students' },
   { num: '340+', label: 'Curated resources' },
@@ -79,11 +70,16 @@ const STATS = [
   { num: '4.9★', label: 'Average rating' },
 ];
 
-/* ─────────────────────────────────────────────── */
 const Features = () => {
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setEmail('');
+  };
+
   return (
     <>
-      {/* ── How it works ──────────────────────── */}
       <section className="how-it-works" id="how-it-works">
         <p className="section-label">How it works</p>
         <h2 className="section-title">From signup to roadmap in 3 minutes</h2>
@@ -104,7 +100,6 @@ const Features = () => {
         </div>
       </section>
 
-      {/* ── Features ──────────────────────────── */}
       <section className="features-section" id="features">
         <p className="section-label">Features</p>
         <h2 className="section-title">Everything a student needs — in one place</h2>
@@ -115,15 +110,12 @@ const Features = () => {
         <div className="features-grid">
           {FEATURES.map((f) => (
             <div className={`feat-card${f.accent ? ' accent' : ''}`} key={f.title}>
-              <div className={`feat-icon ${f.iconClass}`}>{f.icon}</div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
               <span className={`feat-tag ${f.tagClass}`}>{f.tag}</span>
             </div>
           ))}
         </div>
-
-        {/* Skill gap live preview */}
         <div className="gap-preview">
           <div className="gap-preview-header">
             <h4>Skill gap analysis — live preview</h4>
@@ -146,15 +138,27 @@ const Features = () => {
         </div>
       </section>
 
-      {/* ── Stats bar ───────────────────────────
-      <div className="stats-bar">
-        {STATS.map((s) => (
-          <div className="stat-item" key={s.label}>
-            <div className="num">{s.num}</div>
-            <div className="lbl">{s.label}</div>
-          </div>
-        ))}
-      </div> */}
+      <section className="cta-section">
+        <h2>
+          Ready to build your <span>trajectory</span>?
+        </h2>
+        <p>
+          Join thousands of students who replaced confusion with clarity.
+          Free to start — no credit card needed.
+        </p>
+        <form className="cta-input-row" onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <button type="submit">Get started &rarr;</button>
+        </form>
+        <p className="cta-note">Free forever plan available. No spam, ever.</p>
+      </section>
+
     </>
   );
 };

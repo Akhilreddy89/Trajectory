@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useProfile } from "../context/ProfileContext.jsx";
 import CourseCard from "../components/CourseCard.jsx";
 import { completeStage, undoStage, getCompleteRoadmap } from "../../services/roadmapServices.js";
 
 import "../style/Roadmap.css";
 
 function Roadmap() {
+    const { profile } = useProfile();
     const [roadmap, setRoadmap] = useState(null);
     const [progress, setProgress] = useState({ percentage: 0, completedCount: 0, totalStages: 0, remaining: 0 });
     const [expandedStages, setExpandedStages] = useState({});
@@ -27,13 +29,14 @@ function Roadmap() {
                 setExpandedStages(initialExpansion);
             }
         } catch (err) {
-            console.error("Error fetching roadmap workspace metrics:", err);
+            // Ignore roadmap fetch failures
         }
     };
 
     useEffect(() => {
+        if (!profile) return;
         fetchRoadmap();
-    }, []);
+    }, [profile]);
 
     const toggleStageCourses = (index) => {
         setExpandedStages(prev => ({ 
@@ -59,7 +62,6 @@ function Roadmap() {
                 alert(`Stage status updated successfully.`);
             }
         } catch (err) {
-            console.error(`Error executing stage state change (${actionType}):`, err);
             alert(`Failed to modify phase completion matrix.`);
         }
     };

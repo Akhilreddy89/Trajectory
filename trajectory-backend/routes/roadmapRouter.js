@@ -1,5 +1,5 @@
 import { Router } from "express";
-import authMiddleware from "../middlewares/authMiddleware.js";
+import requireAuth from "../middlewares/requestAuth.js";
 import {
   getRoadmap,
   completeStage,
@@ -8,8 +8,8 @@ import {
 
 const roadmapRouter = Router();
 
-roadmapRouter.get('/me', authMiddleware, getRoadmap);
-roadmapRouter.post('/complete-stage/:stageOrder', authMiddleware, completeStage);
-roadmapRouter.patch("/stage/undo",authMiddleware, undoStageController);
+roadmapRouter.get('/me', requireAuth, getRoadmap);
+roadmapRouter.post('/complete-stage/:stageOrder', requireAuth, completeStage);
+roadmapRouter.patch("/stage/undo",requireAuth, undoStageController);
 
 export default roadmapRouter;

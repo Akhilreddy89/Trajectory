@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useProfile } from "../context/ProfileContext.jsx";
 import { getSavedCourses, deleteSavedCourse, completedCourse,getCompletedCourses } from "../../services/courseServices.js";
 import CourseCard from "../components/CourseCard.jsx";
 import "../style/bookmarks.css";
 
 function Bookmarks() {
+    const { profile } = useProfile();
     const [activeTab, setActiveTab] = useState("saved");
     const [savedCourses, setSavedCourses] = useState([]);
     const [completedCourses, setCompletedCourses] = useState([]);
@@ -35,15 +37,16 @@ function Bookmarks() {
                 }
             }
         } catch (err) {
-            console.error("Error aggregating workspace datasets:", err);
+            // Ignore workspace data fetch failures
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
+        if (!profile) return;
         fetchAllDashboardData();
-    }, []);
+    }, [profile]);
 
     const deleteCourse = async (e, bookmarkId) => {
         e.stopPropagation();
@@ -51,7 +54,6 @@ function Bookmarks() {
             await deleteSavedCourse(bookmarkId);
             fetchAllDashboardData();
         } catch (err) {
-            console.error(err);
             alert("Failed to remove course.");
         }
     };
@@ -64,7 +66,6 @@ function Bookmarks() {
             await fetchAllDashboardData();
             setCompletingCourseId(null);
         } catch (err) {
-            console.error(err);
             alert("Failed to mark course as completed.");
             setCompletingCourseId(null);
         }

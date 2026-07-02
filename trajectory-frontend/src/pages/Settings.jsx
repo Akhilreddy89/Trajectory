@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { useProfile } from "../context/ProfileContext.jsx";
 import { getProfile, updateProfile } from "../../services/profileService.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import Footer from "../components/Footer.jsx";
 import "../style/settings.css";
 
 function Settings() {
   const { user } = useAuth();
+  const { profile } = useProfile();
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState({ type: "", message: "" });
   const [settings, setSettings] = useState({
@@ -17,6 +20,11 @@ function Settings() {
 
 
   useEffect(() => {
+    if (!profile) {
+      setLoading(false);
+      return;
+    }
+
     const fetchSettingsData = async () => {
       try {
         const res = await getProfile();
@@ -30,14 +38,13 @@ function Settings() {
           });
         }
       } catch (err) {
-        console.error("Error loading settings:", err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchSettingsData();
-  }, [user]);
+  }, [profile, user]);
 
   const handleChange = (e) => {
     setSettings({ ...settings, [e.target.name]: e.target.value });
@@ -74,10 +81,10 @@ function Settings() {
   }
 
   return (
+    <>
     <div className="dashboard-workspace-settings">
       <div className="settings-dashboard-container">
 
-        {/* Workspace Layout Settings Header */}
         <div className="workspace-settings-header">
           <div className="settings-title-block">
             <h1>Account Settings</h1>
@@ -124,8 +131,6 @@ function Settings() {
               </div>
             </div>
           </div>
-
-          {/* Section 2: Engine Compilation Specs */}
           <div className="settings-card-group">
             <div className="settings-card-meta">
               <h3>Engine Tuning Specs</h3>
@@ -180,7 +185,6 @@ function Settings() {
             </div>
           </div>
 
-          {/* Footer Save Row Action Controls */}
           <div className="settings-action-footer">
             <button type="submit" className="btn-save-settings">
               Save Configuration Changes
@@ -196,6 +200,8 @@ function Settings() {
 
       </div>
     </div>
+    <Footer />
+    </>
   );
 }
 

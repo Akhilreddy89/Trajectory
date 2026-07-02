@@ -87,7 +87,6 @@ function Profile() {
       }
       setLoading(false);
     } catch (err) {
-      console.error(err);
       setLoading(false);
     }
   };
@@ -169,7 +168,6 @@ function Profile() {
       navigate("/dashboard");
     } catch (err) {
       setStatusMessage(err.message || "Failed to update profile. Please try again.");
-      console.error(err);
     }
   };
 

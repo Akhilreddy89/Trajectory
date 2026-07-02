@@ -1,5 +1,5 @@
 import { Router } from "express";
-import authMiddleware from "../middlewares/authMiddleware.js";
+import requireAuth from "../middlewares/requestAuth.js";
 import {
   saveCourse,
   getSavedCourses,
@@ -12,13 +12,13 @@ import {
 } from "../controllers/courseController.js";
 
 const courseRouter = Router();
-courseRouter.get('/course/:courseId',authMiddleware, getCourseById);
-courseRouter.post('/save-course/:courseId', authMiddleware, saveCourse);
-courseRouter.get('/saved-courses', authMiddleware, getSavedCourses);
-courseRouter.delete('/delete-saved-course/:courseId', authMiddleware,deleteCourse);
-courseRouter.post('/mark-completed/:courseId', authMiddleware,markCompleted);
-courseRouter.get('/home/courses', authMiddleware, homecourses);
-courseRouter.get('/completed-courses', authMiddleware, getCompletedCourses);
-courseRouter.get("/search", authMiddleware, contextSearchCourses);
+courseRouter.get('/course/:courseId',requireAuth, getCourseById);
+courseRouter.post('/save-course/:courseId', requireAuth, saveCourse);
+courseRouter.get('/saved-courses', requireAuth, getSavedCourses);
+courseRouter.delete('/delete-saved-course/:courseId', requireAuth,deleteCourse);
+courseRouter.post('/mark-completed/:courseId', requireAuth,markCompleted);
+courseRouter.get('/home/courses', requireAuth, homecourses);
+courseRouter.get('/completed-courses', requireAuth, getCompletedCourses);
+courseRouter.get("/search", requireAuth, contextSearchCourses);
 
 export default courseRouter;

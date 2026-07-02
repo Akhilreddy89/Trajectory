@@ -27,12 +27,19 @@ const getProfile = async (req, res) => {
   try {
     const profile = await Profile.findOne({ userId: req.user });
 
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: "Profile not found",
+      });
+    }
+
     res.json({
       success: true,
-      profile: profile || null,
+      profile,
     });
   } catch (error) {
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 const saveProfile = async (req, res) => {

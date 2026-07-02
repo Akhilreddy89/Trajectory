@@ -3,9 +3,23 @@ import { Link } from 'react-router-dom';
 import '../style/Home.css';
 
 const FOOTER_LINKS = {
-  Product: ['Features', 'How it works', 'Roadmaps', 'Smart Search'],
-  Domains: ['Full Stack Dev', 'Machine Learning', 'Cyber Security', 'Data Science'],
-  Company: ['About', 'Blog', 'Careers', 'Contact'],
+  Product: [
+    { label: 'Features', href: '/#features' },
+    { label: 'How it works', href: '/#how-it-works' },
+    { label: 'Roadmaps', href: '/roadmap' },
+    { label: 'Smart Search', href: '/courses' },
+  ],
+  Domains: [
+    { label: 'Full Stack Dev', href: '/courses?q=full%20stack' },
+    { label: 'Machine Learning', href: '/courses?q=machine%20learning' },
+    { label: 'Cyber Security', href: '/courses?q=cyber%20security' },
+    { label: 'Data Science', href: '/courses?q=data%20science' },
+  ],
+  Company: [
+    { label: 'About', href: '/about' },
+    { label: 'Login', href: '/login' },
+    { label: 'Register', href: '/register' },
+  ],
 };
 
 const Footer = () => {
@@ -20,32 +34,9 @@ const Footer = () => {
 
   return (
     <>
-      {/* ── CTA Section ──────────────────────── */}
-      <section className="cta-section">
-        <h2>
-          Ready to build your <span>trajectory</span>?
-        </h2>
-        <p>
-          Join thousands of students who replaced confusion with clarity.
-          Free to start — no credit card needed.
-        </p>
-        <form className="cta-input-row" onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <button type="submit">Get started &rarr;</button>
-        </form>
-        <p className="cta-note">Free forever plan available. No spam, ever.</p>
-      </section>
-
-      {/* ── Footer ───────────────────────────── */}
+      
       <footer className="footer">
         <div className="footer-top">
-          {/* Brand */}
           <div className="footer-brand">
             <div className="logo-row">
               <span className="logo-dot" />
@@ -56,13 +47,11 @@ const Footer = () => {
               from confusion to career-ready.
             </p>
           </div>
-
-          {/* Link columns */}
           {Object.entries(FOOTER_LINKS).map(([heading, links]) => (
             <div className="footer-col" key={heading}>
               <h4>{heading}</h4>
-              {links.map((l) => (
-                <a href="#" key={l}>{l}</a>
+              {links.map((link) => (
+                <Link to={link.href} key={link.label}>{link.label}</Link>
               ))}
             </div>
           ))}
@@ -70,7 +59,7 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Trajectory. Built for students, by students.</p>
+          <p>&copy; {new Date().getFullYear()} Trajectory. Built for students, by a student.</p>
           <div className="footer-socials">
             <div className="soc-btn" title="Twitter">𝕏</div>
             <div className="soc-btn" title="GitHub">
