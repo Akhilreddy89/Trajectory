@@ -5,6 +5,7 @@ import { getMyProfile } from "../../services/profileService.js";
 import { getLogin } from "../../services/authServices.js";
 import "../style/Auth.css";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -106,6 +107,7 @@ return (
     </form>
     
   </div>
+  <Footer/>
   </>
 );
 }

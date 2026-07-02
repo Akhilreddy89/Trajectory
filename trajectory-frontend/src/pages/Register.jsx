@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { getRegister } from "../../services/authServices.js";
 import "../style/Auth.css";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+
 function Register() {
   const [form, setForm] = useState({ fullname: "", email: "", password: "" });
   const [errors, setErrors] = useState({ fullname: "", email: "", password: "" });
@@ -108,6 +110,7 @@ function Register() {
         <button type="submit">Signup</button>
       </form>
     </div>
+    <Footer />
     </>
   );
 }
