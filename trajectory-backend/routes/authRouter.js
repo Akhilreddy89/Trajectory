@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, registerUser, logoutUser, getCurrentUser } from "../controllers/authController_cookie.js";
+import { loginUser, registerUser, logoutUser, getCurrentUser } from "../controllers/authController.js";
 import { authLimiter } from "../middlewares/authlimiter.js";
 import requireAuth from "../middlewares/requestAuth.js";
 

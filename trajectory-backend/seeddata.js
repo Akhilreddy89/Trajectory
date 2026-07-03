@@ -1,6 +1,4 @@
-// db.js — Trajectory Course Seed Data
-// Compatible with the Course Mongoose schema
-// Run: node db.js  OR  import and use seedCourses() in your app
+
 
 import mongoose from "mongoose";
 import Course from "./models/Course.js"; // adjust path as needed
@@ -10,9 +8,9 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/Trajectory
 export async function connectDB() {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log("✅  MongoDB connected");
+    console.log(" MongoDB connected");
   } catch (err) {
-    console.error("❌  MongoDB connection error:", err.message);
+    console.error("MongoDB connection error:", err.message);
     process.exit(1);
   }
 }

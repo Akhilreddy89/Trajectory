@@ -12,7 +12,7 @@ function Sidebar() {
     { name: "Bookmarks", path: "/bookmarks"},
     { name: "Progress", path: "/progress" },
     { name: "Profile", path: "/profile" },
-    { name: "Settings", path: "/settings" },
+    { name: "Settings", path: "/settings" }
   ];
   return (
     <aside className="sidebar">
